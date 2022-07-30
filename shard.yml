@@ -1,0 +1,15 @@
+name: wayland_client
+version: 0.1.0
+
+authors:
+  - Linus Sellberg <sellberg@gmail.com>
+
+crystal: 1.4.1
+
+license: MIT
+
+scripts:
+  postinstall: make build
+
+libraries:
+  wayland-client: "*"
