@@ -18,6 +18,10 @@ module WaylandClient
       global_remove : Pointer(Void), Pointer(WlRegistry), LibC::UInt -> Void
     end
 
+    struct WlBufferListener
+      release : Pointer(Void), Pointer(WlBuffer) -> Void
+    end
+
     struct WlInterface
       name : LibC::Char*
       version : LibC::Int
@@ -56,6 +60,7 @@ module WaylandClient
       WlShmPool*, LibC::Int, LibC::Int, LibC::Int, LibC::Int, WlShmFormat
     ) : WlBuffer*
     fun wl_buffer_destroy = wl_buffer_destroy_shim(Pointer(WlBuffer))
+    fun wl_buffer_add_listener = wl_buffer_add_listener_shim(WlBuffer*, WlBufferListener*, Void*)
     fun wl_surface_attach = wl_surface_attach_shim(WlSurface*, WlBuffer*, LibC::Int, LibC::Int)
     fun wl_surface_commit = wl_surface_commit_shim(WlSurface*)
     fun wl_surface_damage_buffer = wl_surface_damage_buffer_shim(Pointer(WlSurface), LibC::Int, LibC::Int, LibC::Int, LibC::Int) : Void

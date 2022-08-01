@@ -38,12 +38,8 @@ module WaylandClient
       when "xdg_wm_base"
         base = bind_interface(LibXdgShell.xdg_wm_base_interface, LibWaylandClient::XdgWmBase)
         @xdg = Xdg.new(base)
-      # when "zxdg_decoration_man"
-      #   base = bind_interface(LibXdgShell.xdg_wm_base_interface, LibWaylandClient::XdgWmBase)
-      #   @xdg = Xdg.new(base)
-
-       else
-         #    p interface_name
+      else
+        #    p interface_name
       end
     end
 

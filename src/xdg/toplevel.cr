@@ -6,7 +6,7 @@ class WaylandClient::Xdg
     getter bounds
 
     def initialize(@xdg : Xdg, wl_surface : WaylandClient::Surface, @configure_callback : Toplevel, Surface -> Void)
-      @surface = Surface.new(xdg, wl_surface, Proc(Surface, Void).new {})
+      @surface = Surface.new(xdg, wl_surface, Proc(Surface, Void).new { })
       @toplevel = WaylandClient::LibXdgShell.xdg_surface_get_toplevel(xdg_surface)
 
       @xdg_toplevel_listener = LibXdgShell::ToplevelListener.new(

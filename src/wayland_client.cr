@@ -13,9 +13,10 @@ end
 
 WaylandClient.display do |display|
   surface = display.create_surface
-  buffer = WaylandClient::MemoryBuffer(WaylandClient::Format::XRGB8888).new(display)
+  pool = WaylandClient::Buffer.build(:memory, WaylandClient::Format::XRGB8888, display)
+
   display.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
-    buffer.resize(x, y)
+    buffer = pool.checkout_of_size(x, y)
 
     white = WaylandClient::Format::XRGB8888.new(0xFF, 0xFF, 0xFF)
     black = WaylandClient::Format::XRGB8888.new(0, 0, 0)

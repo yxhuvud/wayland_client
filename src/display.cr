@@ -73,7 +73,6 @@ module WaylandClient
       WaylandClient::Surface.new(registry.compositor)
     end
 
-
     def finalize
       LibWaylandClient.wl_display_disconnect(@display)
     end

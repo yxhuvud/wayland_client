@@ -42,6 +42,10 @@ wl_buffer_destroy_shim(struct wl_buffer *buffer) {
   return wl_buffer_destroy(buffer);
 }
 
+int wl_buffer_add_listener_shim(struct wl_buffer *wl_buffer, const struct wl_buffer_listener *listener, void *data) {
+  return wl_buffer_add_listener(wl_buffer, listener, data);
+}
+
 void
 wl_surface_attach_shim(struct wl_surface *surface, struct wl_buffer *buffer, int x, int y) {
   wl_surface_attach(surface, buffer, x, y);
