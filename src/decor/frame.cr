@@ -10,7 +10,6 @@ module WaylandClient
           },
           close: Proc(Pointer(LibDecor::Frame), Pointer(Void), Void).new { |frame, data|
             frame = data.as(Frame)
-            # TODO: support close callback.
             frame.unref
           },
           commit: Proc(Pointer(LibDecor::Frame), Pointer(Void), Void).new { |frame, data|
@@ -35,11 +34,13 @@ module WaylandClient
             {400, 300}
           end
         window_state = get_window_state(config)
-        # Initial call to configure sets the initial window size,
-        # doing the callback at this point will result in misalignment in output.
-        commit(config, x, y) if initial
-        @configure_callback.call(x, y, window_state)
-        commit(config, x, y)
+        with_state(x, y) do |state|
+          # Initial call to configure sets the initial window size,
+          # doing the callback at this point will result in misalignment in output.
+          commit(config, state) if initial
+          @configure_callback.call(x, y, window_state)
+          commit(config, state)
+        end
       end
 
       def get_content_size(config : Pointer(LibDecor::Configuration))
@@ -98,10 +99,14 @@ module WaylandClient
         LibDecor.frame_map(self)
       end
 
-      def commit(config, x, y)
+      def with_state(x, y)
         state = LibDecor.state_new(x, y)
-        LibDecor.frame_commit(self, state, config)
+        yield state
         LibDecor.state_free(state)
+      end
+
+      def commit(config, state)
+        LibDecor.frame_commit(self, state, config)
       end
     end
   end

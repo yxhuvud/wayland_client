@@ -6,24 +6,11 @@ module WaylandClient
 
     def initialize(compositor) # todo: listener
       @surface = WaylandClient::LibWaylandClient.wl_compositor_create_surface(compositor)
-      # @listener = LibXdgShell::SurfaceListener.new(
-      #   configure: Proc(Void*, LibXdgShell::WlSurface*, UInt32, Void).new do |instance, surface, serial|
-      #     instance.as(Surface).configure(surface, serial)
-      #   end
-      # )
-      # LibXdgShell.xdg_surface_add_listener(xdg_surface, pointerof(@listener), self.as(Void*))
     end
 
     def to_unsafe
       surface
     end
-
-    # def configure(xdg_surface : LibXdgShell::XdgSurface*, serial) : Void
-    #   p :surface_configure
-    #   @configure_callback.call(self)
-    #   LibXdgShell.xdg_surface_ack_configure(xdg_surface, serial)
-    #   commit
-    # end
 
     def attach_buffer(buffer, x = 0, y = 0)
       WaylandClient::LibWaylandClient.wl_surface_attach(surface, buffer, x, y)
