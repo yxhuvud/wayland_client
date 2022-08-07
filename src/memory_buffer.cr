@@ -2,7 +2,7 @@ require "./display"
 
 module WaylandClient
   module Buffer
-    macro build(kind, format, display)
+    macro new(kind, format, display)
       case :{{kind.id}}
       when :memory # TODO: enum..
         WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory({{format.id}})).new({{display.id}})
@@ -13,25 +13,32 @@ module WaylandClient
 
     class Pool(T)
       getter display
+      getter size : Tuple(Int32, Int32)
 
       def initialize(@display : WaylandClient::Display)
         @free_buffers = Deque(T).new
+        @size = {0, 0}
       end
 
-      def checkout_of_size(x, y)
-        buf = checkout
-        if (buf.current_x != x) || (buf.current_y != y)
-          buf.resize(x, y)
-        end
-        buf
+      def resize(x, y)
+        raise "Invalid size" unless x > 0 && y > 0
+
+        @size = {x, y}
+      end
+
+      def resize!(x, y, surface)
+        resize(x, y)
+        surface.repaint!(self, flush: false) { |buffer| yield buffer }
       end
 
       def checkout
         if buffer = @free_buffers.pop?
+          buffer.resize(*size) if wrong_size?(buffer)
           return buffer
         end
 
         T.new(display, self)
+          .tap &.resize(*size)
       end
 
       def checkin(buffer)
@@ -41,17 +48,21 @@ module WaylandClient
           @free_buffers << buffer
         end
       end
+
+      private def wrong_size?(buffer)
+        (buffer.x_size &+ 1 != @size[0]) || (buffer.y_size &+ 1 != @size[1])
+      end
     end
 
     class Memory(T)
-      getter fd, display, pool, current_x, current_y
+      getter fd, display, pool, x_size, y_size
 
       def initialize(@display : WaylandClient::Display, @pool : Pool(Memory(T)))
         @fd = IO::FileDescriptor.new(LibC.memfd_create("buffer".to_unsafe, 0))
         @closed = false
         @buffer = Pointer(T).null
         @wl_buffer = Pointer(LibWaylandClient::WlBuffer).null
-        @current_x = @current_y = @size = 0
+        @x_size = @y_size = @size = 0
         @buffer_listener = LibWaylandClient::WlBufferListener.new(
           release: Proc(Void*, Pointer(LibWaylandClient::WlBuffer), Void).new do |data, buffer|
             buffer = data.as(Memory(T))
@@ -63,7 +74,6 @@ module WaylandClient
       def resize(x, y)
         stride = x * pixel_size
         new_size = stride * y
-
         unmap if @wl_buffer
         LibC.ftruncate(fd.fd, new_size)
         @buffer = LibC.mmap(nil, new_size, LibC::PROT_READ | LibC::PROT_WRITE, LibC::MAP_SHARED, fd.fd, 0).as(Pointer(T))
@@ -74,14 +84,26 @@ module WaylandClient
         WaylandClient::LibWaylandClient.wl_buffer_add_listener(@wl_buffer, pointerof(@buffer_listener), self.as(Void*))
         WaylandClient::LibWaylandClient.wl_shm_pool_destroy(pool)
         @size = new_size
-        @current_x = x - 1
-        @current_y = y - 1
+        @x_size = x - 1
+        @y_size = y - 1
       end
 
       def set_all
         buf = @buffer
-        0.to(@current_y) do |y|
-          0.to(@current_x) do |x|
+        0.to(@y_size) do |y|
+          0.to(@x_size) do |x|
+            buf.value = yield(x, y)
+            buf += 1
+          end
+        end
+      end
+
+      def set(xrange, yrange)
+        buf_with_xoffset = @buffer + xrange.begin
+        yoffset = @y_size + 1
+        yrange.each do |y|
+          buf = buf_with_xoffset + yoffset &* (y)
+          xrange.each do |x|
             buf.value = yield(x, y)
             buf += 1
           end

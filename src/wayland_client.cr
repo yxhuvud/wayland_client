@@ -11,20 +11,26 @@ module WaylandClient
   end
 end
 
+WHITE = WaylandClient::Format::XRGB8888.new(0xFF, 0xFF, 0xFF)
+BLACK = WaylandClient::Format::XRGB8888.new(0, 0, 0)
+
 WaylandClient.display do |display|
   surface = display.create_surface
-  pool = WaylandClient::Buffer.build(:memory, WaylandClient::Format::XRGB8888, display)
+  pool = WaylandClient::Buffer.new(:memory, WaylandClient::Format::XRGB8888, display)
 
   display.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
-    buffer = pool.checkout_of_size(x, y)
-
-    white = WaylandClient::Format::XRGB8888.new(0xFF, 0xFF, 0xFF)
-    black = WaylandClient::Format::XRGB8888.new(0, 0, 0)
-    buffer.set_all do |x1, y1|
-      (x1 * y1 < x * x / 2) ? white : black
+    pool.resize!(x, y, surface) do |buffer|
+      buffer.set_all do |x1, y1|
+        (x1 &* y1 < x &* x / 2) ? WaylandClient::Format::XRGB8888.new(0xFF, 0xFF, 0xFF) : WaylandClient::Format::XRGB8888.new(0, 0, 0)
+      end
     end
-    surface.attach_buffer(buffer)
-    surface.commit
+  end
+
+  spawn do
+    loop do
+      sleep 5
+      surface.repaint!(pool, &.set_all { WaylandClient::Format::XRGB8888.new(0, 0xFF, 0) })
+    end
   end
 
   display.wait_loop

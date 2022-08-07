@@ -20,6 +20,19 @@ module WaylandClient
       LibWaylandClient.wl_surface_damage_buffer(self, x1, x2, x3, x4)
     end
 
+    def repaint!(pool, flush = true)
+      buffer = pool.checkout
+      yield buffer
+      attach_buffer(buffer)
+      damage_all
+      commit
+      pool.display.flush if flush
+    end
+
+    def damage_all
+      damage_buffer(0, 0, Int32::MAX, Int32::MAX)
+    end
+
     def commit
       WaylandClient::LibWaylandClient.wl_surface_commit(surface)
     end
