@@ -17,6 +17,7 @@ module WaylandClient
       )
 
       @compositor = Pointer(LibWaylandClient::WlCompositor).null
+      @subcompositor = Pointer(LibWaylandClient::WlSubcompositor).null
       @shm = Pointer(LibWaylandClient::WlShm).null
 
       @xdg = nil
@@ -33,6 +34,8 @@ module WaylandClient
       case interface_name
       when "wl_compositor"
         @compositor = bind_interface(LibWaylandClient.wl_compositor_interface, LibWaylandClient::WlCompositor)
+      when "wl_subcompositor"
+        @subcompositor = bind_interface(LibWaylandClient.wl_subcompositor_interface, LibWaylandClient::WlSubcompositor)
       when "wl_shm"
         @shm = bind_interface(LibWaylandClient.wl_shm_interface, LibWaylandClient::WlShm)
       when "xdg_wm_base"
@@ -45,6 +48,10 @@ module WaylandClient
 
     def compositor
       @compositor.not_nil!
+    end
+
+    def subcompositor
+      @subcompositor.not_nil!
     end
 
     def shm
@@ -60,6 +67,8 @@ module WaylandClient
       case interface_name
       when "wl_compositor"
         @compositor = nil
+      when "wl_subcompositor"
+        @subcompositor = nil
       when "wl_shm"
         @shm = nil
       when "xdg_wm_base"

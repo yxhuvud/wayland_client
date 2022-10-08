@@ -17,6 +17,8 @@ BLACK = WaylandClient::Format::XRGB8888.new(0, 0, 0)
 WaylandClient.display do |display|
   surface = display.create_surface
   pool = WaylandClient::Buffer.new(:memory, WaylandClient::Format::XRGB8888, display)
+  subsurface = surface.create_subsurface sync: false
+
   setup_counter = WaylandClient::Counter.new("setup: %s")
 
   display.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|

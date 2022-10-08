@@ -6,12 +6,15 @@ module WaylandClient
     alias WlRegistry = Void
     alias WlMessage = Void
     alias WlSurface = Void
+    alias WlSubsurface = Void
     alias WlBuffer = Void
     alias WlShmPool = Void
     alias WlCompositor = Void
+    alias WlSubcompositor = Void
     alias WlShm = Void
     alias XdgWmBase = Void
     alias WlArray = Void
+    alias WlRegion = Void
 
     struct WlRegistryListener
       global : Pointer(Void), Pointer(WlRegistry), LibC::UInt, Pointer(LibC::Char), LibC::UInt -> Void
@@ -32,6 +35,7 @@ module WaylandClient
     end
 
     $wl_compositor_interface : WlInterface
+    $wl_subcompositor_interface : WlInterface
     $wl_shm_interface : WlInterface
 
     alias WlDisplayUpdateFunc = UInt32, Pointer(Void) -> LibC::Int
@@ -49,7 +53,7 @@ module WaylandClient
     #    fun wl_shm_pool_create_buffer(Pointer(WlShmPool), LibC::Int, LibC::Int, LibC::Int, LibC::Int, WlShmFormat) : Pointer(WlBuffer)
     fun wl_buffer_destroy(Pointer(WlBuffer)) : Void
 
-    # Shims defined in shim.cr:
+    fun wl_region_destroy = wl_surface_destroy_shim(Pointer(WlRegion)) : Void
     fun wl_surface_destroy = wl_surface_destroy_shim(Pointer(WlSurface)) : Void
 
     fun wl_display_get_registry = wl_display_get_registry_shim(WlDisplay*) : Pointer(WlRegistry)
@@ -69,6 +73,16 @@ module WaylandClient
 
     # Enums:
 
+    fun wl_subcompositor_get_subsurface = wl_subcompositor_get_subsurface_shim(Pointer(WlSubcompositor), Pointer(WlSurface), Pointer(WlSurface)) : Pointer(WlSubsurface)
+    fun wl_subsurface_set_sync = wl_subsurface_set_sync_shim(Pointer(WlSubsurface)) : Void
+    fun wl_subsurface_set_desync = wl_subsurface_set_desync_shim(Pointer(WlSubsurface)) : Void
+
+    fun wl_compositor_create_region =
+      wl_compositor_create_region_shim(Pointer(WlCompositor)) : Pointer(WlRegion)
+    fun wl_surface_set_opaque_region =
+      wl_surface_set_opaque_region_shim(Pointer(WlSurface), Pointer(WlRegion)) : Void
+
+    # Enums:
     enum WlShmFormat : LibC::UInt
       ARGB8888    =          0 # 32-bit ARGB format, [31:0] A:R:G:B 8:8:8:8 little endian
       XRGB8888    =          1 # 32-bit RGB format [31:0] x:R:G:B 8:8:8:8 little endian

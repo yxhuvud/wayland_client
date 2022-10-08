@@ -61,9 +61,25 @@ wl_surface_commit_shim(struct wl_surface *surface) {
   wl_surface_commit(surface);
 }
 
+struct wl_subsurface *
+wl_subcompositor_get_subsurface_shim(struct wl_subcompositor *subcomp,
+                                     struct wl_surface *target, struct wl_surface *parent) {
+  return wl_subcompositor_get_subsurface(subcomp, target, parent);
+}
+
 void
 wl_surface_damage_buffer_shim(struct wl_surface *surface, int x1, int x2, int x3, int x4) {
   wl_surface_damage_buffer(surface, x1, x2, x3, x4);
+}
+
+void
+wl_subsurface_set_sync_shim(struct wl_subsurface *sub) {
+  wl_subsurface_set_sync(sub);
+}
+
+void
+wl_subsurface_set_desync_shim(struct wl_subsurface *sub) {
+  wl_subsurface_set_desync(sub);
 }
 
 struct xdg_surface *

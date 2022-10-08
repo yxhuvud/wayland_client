@@ -1,4 +1,5 @@
 require "./lib/lib_wayland_client"
+require "./subsurface"
 
 module WaylandClient
   class Surface
@@ -31,6 +32,10 @@ module WaylandClient
 
     def damage_all
       damage_buffer(0, 0, Int32::MAX, Int32::MAX)
+    end
+
+    def create_subsurface(sync = true)
+      Subsurface.new(self, sync)
     end
 
     def commit
