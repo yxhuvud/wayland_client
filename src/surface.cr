@@ -13,11 +13,11 @@ module WaylandClient
     end
 
     def attach_buffer(buffer, x = 0, y = 0)
-      WaylandClient::LibWaylandClient.wl_surface_attach(surface, buffer, x, y)
+      LibWaylandClient.wl_surface_attach(surface, buffer, x, y)
     end
 
-    def damage_buffer(x1, x2, x3, x4)
-      LibWaylandClient.wl_surface_damage_buffer(self, x1, x2, x3, x4)
+    def damage_buffer(x, y, width, height)
+      LibWaylandClient.wl_surface_damage_buffer(self, x, y, width, height)
     end
 
     def repaint!(pool, flush = true)
@@ -34,7 +34,7 @@ module WaylandClient
     end
 
     def commit
-      WaylandClient::LibWaylandClient.wl_surface_commit(surface)
+      LibWaylandClient.wl_surface_commit(surface)
     end
 
     def finalize
