@@ -18,6 +18,7 @@ module WaylandClient
       def initialize(@display : WaylandClient::Display, x = 0, y = 0)
         @free_buffers = Deque(T).new
         @size = {x, y}
+        @checked_out = 0
       end
 
       def resize(x, y)
@@ -34,14 +35,17 @@ module WaylandClient
       def checkout
         if buffer = @free_buffers.pop?
           buffer.resize(*size) if wrong_size?(buffer)
+          @checked_out &+= 1
           return buffer
         end
 
+        @checked_out &+= 1
         T.new(display, self)
           .tap &.resize(*size)
       end
 
       def checkin(buffer)
+        @checked_out &-= 1
         if @free_buffers.size > 4
           buffer.close
         else
