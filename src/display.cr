@@ -5,6 +5,7 @@ require "./registry"
 require "./decor"
 require "./memory_buffer"
 require "./format"
+require "./counter"
 
 module WaylandClient
   class Display

@@ -17,8 +17,10 @@ BLACK = WaylandClient::Format::XRGB8888.new(0, 0, 0)
 WaylandClient.display do |display|
   surface = display.create_surface
   pool = WaylandClient::Buffer.new(:memory, WaylandClient::Format::XRGB8888, display)
+  setup_counter = WaylandClient::Counter.new("setup: %s")
 
   display.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
+    setup_counter.register
     pool.resize!(x, y, surface) do |buffer|
       buffer.set_all do |x1, y1|
         (x1 &* y1 < x &* x / 2) ? WaylandClient::Format::XRGB8888.new(0xFF, 0xFF, 0xFF) : WaylandClient::Format::XRGB8888.new(0, 0, 0)
