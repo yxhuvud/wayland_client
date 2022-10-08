@@ -46,7 +46,7 @@ module WaylandClient
 
       def checkin(buffer)
         @checked_out &-= 1
-        if @free_buffers.size > 4
+        if @free_buffers.size > 3
           buffer.close
         else
           @free_buffers << buffer
