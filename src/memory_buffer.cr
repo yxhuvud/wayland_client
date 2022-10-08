@@ -15,9 +15,9 @@ module WaylandClient
       getter display
       getter size : Tuple(Int32, Int32)
 
-      def initialize(@display : WaylandClient::Display)
+      def initialize(@display : WaylandClient::Display, x = 0, y = 0)
         @free_buffers = Deque(T).new
-        @size = {0, 0}
+        @size = {x, y}
       end
 
       def resize(x, y)
