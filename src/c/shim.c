@@ -61,10 +61,25 @@ wl_surface_commit_shim(struct wl_surface *surface) {
   wl_surface_commit(surface);
 }
 
+int wl_callback_add_listener_shim(struct wl_callback *wl_callback,
+                         const struct wl_callback_listener *listener, void *data) {
+  return wl_callback_add_listener(wl_callback,listener, data);
+}
+
+struct wl_callback *
+wl_surface_frame_shim(struct wl_surface *wl_surface) {
+  return wl_surface_frame(wl_surface);
+}
+
 struct wl_subsurface *
 wl_subcompositor_get_subsurface_shim(struct wl_subcompositor *subcomp,
                                      struct wl_surface *target, struct wl_surface *parent) {
   return wl_subcompositor_get_subsurface(subcomp, target, parent);
+}
+
+void
+wl_callback_destroy_shim(struct wl_callback *wl_callback) {
+  wl_callback_destroy(wl_callback);
 }
 
 void

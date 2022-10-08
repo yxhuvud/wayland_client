@@ -14,6 +14,7 @@ module WaylandClient
     alias WlShm = Void
     alias XdgWmBase = Void
     alias WlArray = Void
+    alias WlCallback = Void
     alias WlRegion = Void
 
     struct WlRegistryListener
@@ -23,6 +24,10 @@ module WaylandClient
 
     struct WlBufferListener
       release : Pointer(Void), Pointer(WlBuffer) -> Void
+    end
+
+    struct WlCallbackListener
+      done : Pointer(Void), Pointer(WlCallback), UInt32 -> Void
     end
 
     struct WlInterface
@@ -52,6 +57,7 @@ module WaylandClient
     fun wl_display_get_fd(Pointer(WlDisplay)) : LibC::Int
     #    fun wl_shm_pool_create_buffer(Pointer(WlShmPool), LibC::Int, LibC::Int, LibC::Int, LibC::Int, WlShmFormat) : Pointer(WlBuffer)
     fun wl_buffer_destroy(Pointer(WlBuffer)) : Void
+    fun wl_callback_destroy(Pointer(WlCallback)) : Void
 
     fun wl_region_destroy = wl_surface_destroy_shim(Pointer(WlRegion)) : Void
     fun wl_surface_destroy = wl_surface_destroy_shim(Pointer(WlSurface)) : Void
@@ -71,7 +77,9 @@ module WaylandClient
     fun wl_surface_commit = wl_surface_commit_shim(WlSurface*)
     fun wl_surface_damage_buffer = wl_surface_damage_buffer_shim(Pointer(WlSurface), LibC::Int, LibC::Int, LibC::Int, LibC::Int) : Void
 
-    # Enums:
+    fun wl_surface_frame = wl_surface_frame_shim(Pointer(WlSurface)) : Pointer(WlCallback)
+    fun wl_callback_add_listener = wl_callback_add_listener_shim(Pointer(WlCallback), Pointer(WlCallbackListener), Pointer(Void)) : LibC::Int
+    fun wl_callback_destroy = wl_callback_destroy_shim(Pointer(WlCallback))
 
     fun wl_subcompositor_get_subsurface = wl_subcompositor_get_subsurface_shim(Pointer(WlSubcompositor), Pointer(WlSurface), Pointer(WlSurface)) : Pointer(WlSubsurface)
     fun wl_subsurface_set_sync = wl_subsurface_set_sync_shim(Pointer(WlSubsurface)) : Void
