@@ -22,6 +22,11 @@ wl_compositor_create_surface_shim(struct wl_compositor *wl_compositor) {
   return wl_compositor_create_surface(wl_compositor);
 }
 
+void
+wl_surface_destroy_shim(struct wl_surface *wl_surface) {
+  wl_surface_destroy(wl_surface);
+}
+
 struct wl_shm_pool *
 wl_shm_create_pool_shim(struct wl_shm *shm, int fd, int size) {
   return wl_shm_create_pool(shm, fd, size);

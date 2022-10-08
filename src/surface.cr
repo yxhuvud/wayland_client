@@ -38,7 +38,7 @@ module WaylandClient
     end
 
     def finalize
-      # TODO: destroy surface
+      LibWaylandClient.wl_surface_destroy(self)
     end
   end
 end

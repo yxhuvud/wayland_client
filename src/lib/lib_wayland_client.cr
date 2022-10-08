@@ -50,6 +50,8 @@ module WaylandClient
     fun wl_buffer_destroy(Pointer(WlBuffer)) : Void
 
     # Shims defined in shim.cr:
+    fun wl_surface_destroy = wl_surface_destroy_shim(Pointer(WlSurface)) : Void
+
     fun wl_display_get_registry = wl_display_get_registry_shim(WlDisplay*) : Pointer(WlRegistry)
     fun wl_registry_add_listener = wl_registry_add_listener_shim(WlRegistry*, WlRegistryListener*, Void*)
     fun wl_registry_bind = wl_registry_bind_shim(WlRegistry*, UInt32, WlInterface*, UInt32) : Void*
