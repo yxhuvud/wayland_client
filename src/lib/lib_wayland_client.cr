@@ -55,7 +55,7 @@ module WaylandClient
     fun wl_display_read_events(Pointer(WlDisplay)) : LibC::Int
     fun wl_display_roundtrip(Pointer(WlDisplay)) : LibC::Int
     fun wl_display_get_fd(Pointer(WlDisplay)) : LibC::Int
-    #    fun wl_shm_pool_create_buffer(Pointer(WlShmPool), LibC::Int, LibC::Int, LibC::Int, LibC::Int, WlShmFormat) : Pointer(WlBuffer)
+
     fun wl_buffer_destroy(Pointer(WlBuffer)) : Void
     fun wl_callback_destroy(Pointer(WlCallback)) : Void
 
