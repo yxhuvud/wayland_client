@@ -41,8 +41,26 @@ module WaylandClient
       Close
     end
 
+    # Need to be able to do a copy of this one, sadly.
+    struct Configuration
+      serial : UInt32
+      has_window_state : Bool
+      window_state : LibC::Int # Well enum.
+      has_size : Bool
+      window_width : LibC::Int
+      window_height : LibC::Int
+      # struct libdecor_configuration {
+      #   uint32_t serial;
+      #   bool has_window_state;
+      #   enum libdecor_window_state window_state;
+      #   bool has_size;
+      #   int window_width;
+      #   int window_height;
+      #};
+    end
+
     alias Frame = Void
-    alias Configuration = Void
+#    alias Configuration = Void
     alias Context = Void
     alias State = Void
 

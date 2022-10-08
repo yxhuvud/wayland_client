@@ -3,8 +3,9 @@ module WaylandClient
     getter surface
     getter parent
 
-    def initialize(@parent : Surface, sync)
-      @surface = Surface.new(parent.registry)
+    def initialize(@parent : Surface, sync, opaque, pool)
+      pool ||= @parent.pool.class.new
+      @surface = Surface.new(parent.registry, opaque, parent.display, pool)
       @subsurface = WaylandClient::LibWaylandClient.wl_subcompositor_get_subsurface(
         parent.registry.subcompositor, surface, parent
       )

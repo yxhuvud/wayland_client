@@ -3,9 +3,6 @@ require "./lib/lib_xdg_shell"
 require "./surface"
 require "./registry"
 require "./decor"
-require "./memory_buffer"
-require "./format"
-require "./counter"
 
 module WaylandClient
   class Display
@@ -70,8 +67,8 @@ module WaylandClient
       decorator.frame(surface, title, app_id, configure_callback)
     end
 
-    def create_surface
-      WaylandClient::Surface.new(registry.compositor)
+    def create_surface(buffer_pool, opaque)
+      WaylandClient::Surface.new(registry, opaque, self, buffer_pool)
     end
 
     def finalize

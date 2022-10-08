@@ -1,6 +1,7 @@
 module WaylandClient
   class Counter
     getter time
+    getter counter
 
     def initialize(@template : String)
       @counter = 0

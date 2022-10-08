@@ -27,6 +27,33 @@ wl_surface_destroy_shim(struct wl_surface *wl_surface) {
   wl_surface_destroy(wl_surface);
 }
 
+void
+wl_region_destroy_shim(struct wl_region *wl_region) {
+  wl_region_destroy(wl_region);
+}
+
+void
+wl_surface_set_opaque_region_shim(struct wl_surface *wl_surface, struct wl_region *wl_region) {
+  wl_surface_set_opaque_region(wl_surface, wl_region);
+}
+
+struct wl_region *
+wl_compositor_create_region_shim(struct wl_compositor *compositor) {
+  return wl_compositor_create_region(compositor);
+}
+
+void
+wl_region_add_shim(struct wl_region* wl_region, int x, int y, int width, int height)
+{
+    wl_region_add(wl_region, x, y, width, height);
+}
+
+void
+wl_region_subtract_shim(struct wl_region* wl_region, int x, int y, int width, int height)
+{
+    wl_region_subtract(wl_region, x, y, width, height);
+}
+
 struct wl_shm_pool *
 wl_shm_create_pool_shim(struct wl_shm *shm, int fd, int size) {
   return wl_shm_create_pool(shm, fd, size);

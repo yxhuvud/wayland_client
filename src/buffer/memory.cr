@@ -1,64 +1,15 @@
-require "./display"
+require "./pool"
+require "../display"
+require "../lib/lib_c"
 
 module WaylandClient
   module Buffer
-    macro new(kind, format, display)
-      case :{{kind.id}}
-      when :memory # TODO: enum..
-        WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory({{format.id}})).new({{display.id}})
-      else
-        raise "Unreachable"
-      end
-    end
-
-    class Pool(T)
-      getter display
-      getter size : Tuple(Int32, Int32)
-
-      def initialize(@display : WaylandClient::Display, x = 0, y = 0)
-        @free_buffers = Deque(T).new
-        @size = {x, y}
-        @checked_out = 0
-      end
-
-      def resize(x, y)
-        raise "Invalid size" unless x > 0 && y > 0
-
-        @size = {x, y}
-      end
-
-      def resize!(x, y, surface)
-        resize(x, y)
-        surface.repaint!(self, flush: false) { |buffer| yield buffer }
-      end
-
-      def checkout
-        if buffer = @free_buffers.pop?
-          buffer.resize(*size) if wrong_size?(buffer)
-          @checked_out &+= 1
-          return buffer
-        end
-
-        @checked_out &+= 1
-        T.new(display, self)
-          .tap &.resize(*size)
-      end
-
-      def checkin(buffer)
-        @checked_out &-= 1
-        if @free_buffers.size > 3
-          buffer.close
-        else
-          @free_buffers << buffer
-        end
-      end
-
-      private def wrong_size?(buffer)
-        (buffer.x_size &+ 1 != @size[0]) || (buffer.y_size &+ 1 != @size[1])
-      end
+    module Buffer
     end
 
     class Memory(T)
+      include ::WaylandClient::Buffer::Buffer
+
       getter fd, display, pool, x_size, y_size
 
       def initialize(@display : WaylandClient::Display, @pool : Pool(Memory(T)))
