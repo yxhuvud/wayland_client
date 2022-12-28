@@ -16,6 +16,18 @@ end
 WHITE = WaylandClient::Format::XRGB8888.new(0xFF, 0xFF, 0xFF)
 BLACK = WaylandClient::Format::XRGB8888.new(0, 0, 0)
 
+frame_counter = WaylandClient::Counter.new("Frames: %s")
+sleep 0.01 # To make the counters print in consistent order
+setup_counter = WaylandClient::Counter.new("setup: %s")
+
+spawn do
+  loop { frame_counter.measure { |value| puts "frame: %s" % value } }
+end
+
+spawn do
+  loop { setup_counter.measure { |value| puts "config: %s" % value } }
+end
+
 WaylandClient.display do |display|
   surface = display.create_surface(
     buffer_pool: WaylandClient::Buffer.new(:memory, WaylandClient::Format::XRGB8888),
@@ -24,8 +36,6 @@ WaylandClient.display do |display|
   # fixme
   subsurface = surface.create_subsurface sync: false, opaque: true
 
-  frame_counter = WaylandClient::Counter.new("Frames: %s")
-  setup_counter = WaylandClient::Counter.new("setup: %s")
 
   frame_callback = Proc(UInt32, Nil).new do |time|
     frame_counter.register time
