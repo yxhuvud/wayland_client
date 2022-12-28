@@ -32,8 +32,8 @@ module WaylandClient
         config_copy = Pointer(LibDecor::Configuration).malloc
         config_copy.copy_from(config, 1)
         surface.pool.callback = Proc(Nil).new { perform_configure(config_copy) }
-        #  Make resizing smoother:
-        sleep 0.001
+        # Make resizing less of a lag-fest. Gnome-shell lack of back pressure :(
+        sleep 0.0015
       end
 
       private def perform_configure(config)
