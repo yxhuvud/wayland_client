@@ -18,7 +18,7 @@ module WaylandClient
       @chained_frames = false
     end
 
-    def request(frame_handler : Callback, chain = true, clear_callback = true)
+    def request(frame_handler : Callback, chain = true)
       @chained_frames = chain
       @frame_handler = frame_handler
       @callback_count += 1
@@ -46,7 +46,7 @@ module WaylandClient
           # handler.call(time)
         end
 
-        request(handler, true, false) if @chained_frames && !skip_next
+        request(handler, true) if @chained_frames && !skip_next
       else
         raise "Invalid frame setup, no handler detected"
       end
