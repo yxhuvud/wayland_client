@@ -38,21 +38,22 @@ module WaylandClient
       LibWaylandClient.wl_surface_damage_buffer(self, x, y, width, height)
     end
 
-    def with_eventual_buffer(cb)
-      if buf = checkout?(display)
-        cb.call(buf)
-      else
-        pool.callback = cb
-      end
-    end
-
-    def repaint!(flush = true)
-      buffer = pool.checkout(display)
-      yield buffer
-      attach_buffer(buffer)
+    def repaint!
+      yield attach_buffer
       damage_all
       commit
-      display.flush if flush
+    end
+
+    # Return a buffer attached to the surface. Be sure to damage and
+    # commit the surface once any work is done, otherwise any changes
+    # to the buffer won't be applied.
+
+    # Warning: Will give a different buffer each time. Call this only
+    # once each time an update is to happen.
+    def attach_buffer
+      buffer = pool.checkout(display)
+      attach_buffer(buffer)
+      buffer
     end
 
     def resize(x, y)
