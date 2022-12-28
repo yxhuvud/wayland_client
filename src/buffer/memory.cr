@@ -43,6 +43,10 @@ module WaylandClient
         @y_size = y - 1
       end
 
+      def to_slice
+        Slice(T).new(@buffer, (x_size + 1) * (y_size + 1))
+      end
+
       def map!
         buf = @buffer
         0.to(@y_size) do |y|
