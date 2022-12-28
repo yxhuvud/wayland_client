@@ -63,10 +63,6 @@ module WaylandClient
       pool.size
     end
 
-    def resize_buffers(x, y)
-      repaint!(flush: false) { |buffer| yield buffer }
-    end
-
     def damage_all
       damage_buffer(0, 0, Int32::MAX, Int32::MAX)
     end
