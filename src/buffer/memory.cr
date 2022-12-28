@@ -43,7 +43,7 @@ module WaylandClient
         @y_size = y - 1
       end
 
-      def set_all
+      def map!
         buf = @buffer
         0.to(@y_size) do |y|
           0.to(@x_size) do |x|
@@ -53,7 +53,7 @@ module WaylandClient
         end
       end
 
-      def set(xrange, yrange)
+      def map!(xrange, yrange)
         buf_with_xoffset = @buffer + xrange.begin
         yoffset = @y_size + 1
         yrange.each do |y|

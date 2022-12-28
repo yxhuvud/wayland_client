@@ -30,7 +30,7 @@ WaylandClient.display do |display|
   frame_callback = Proc(UInt32, Nil).new do |time|
     frame_counter.register time
 
-    subsurface.surface.repaint!(&.set_all { BLACK })
+    subsurface.surface.repaint!(&.map! { WHITE })
   end
 
   display.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
@@ -38,7 +38,7 @@ WaylandClient.display do |display|
 
     surface.repaint!(flush: false, &.set_all { |x1, y1| BLACK })
     subsurface.surface.resize(*surface.size)
-    subsurface.surface.repaint! &.set_all { |x1, y1| WHITE }
+    subsurface.surface.repaint! &.map! { WHITE }
 
     subsurface.surface.request_frame(frame_callback)
   end
