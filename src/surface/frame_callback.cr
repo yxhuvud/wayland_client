@@ -10,8 +10,8 @@ module WaylandClient
       @callback_count = 0
       @callback = LibWaylandClient::WlCallbackListener.new(
         done: Proc(Pointer(Void), Pointer(LibWaylandClient::WlCallback), UInt32, Void).new do |data, cb, time|
-          LibWaylandClient.wl_callback_destroy(cb)
           data.as(FrameCallback).frame(time)
+          LibWaylandClient.wl_callback_destroy(cb)
         end,
       )
       @frame_handler = nil
