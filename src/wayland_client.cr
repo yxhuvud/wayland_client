@@ -71,4 +71,7 @@ WaylandClient.display do |display|
   end
 
   display.wait_loop
+
+  subsurface.close
+  surface.close
 end

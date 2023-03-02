@@ -124,6 +124,11 @@ wl_subsurface_set_desync_shim(struct wl_subsurface *sub) {
   wl_subsurface_set_desync(sub);
 }
 
+void
+wl_subsurface_destroy_shim(struct wl_subsurface *sub) {
+  wl_subsurface_destroy(sub);
+}
+
 struct xdg_surface *
 xdg_wm_base_get_xdg_surface_shim(struct xdg_wm_base *xdg_wm_base, struct wl_surface *surface)
 {

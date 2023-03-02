@@ -23,5 +23,10 @@ module WaylandClient
     def to_unsafe
       @subsurface
     end
+
+    def close
+      WaylandClient::LibWaylandClient.wl_subsurface_destroy(@subsurface)
+      @surface.close
+    end
   end
 end

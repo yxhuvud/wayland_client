@@ -76,7 +76,7 @@ module WaylandClient
       LibWaylandClient.wl_surface_commit(surface)
     end
 
-    def finalize
+    def close
       LibWaylandClient.wl_surface_destroy(self)
     end
   end
