@@ -1,21 +1,25 @@
 module WaylandClient
   @[Link("wayland-client", ldflags: "#{__DIR__}/../../build/shim.o")]
   lib LibWaylandClient
-    alias WlDisplay = Void
-    alias WlConnection = Void
-    alias WlRegistry = Void
-    alias WlMessage = Void
-    alias WlSurface = Void
-    alias WlSubsurface = Void
-    alias WlBuffer = Void
-    alias WlShmPool = Void
-    alias WlCompositor = Void
-    alias WlSubcompositor = Void
-    alias WlShm = Void
-    alias XdgWmBase = Void
     alias WlArray = Void
+    alias WlBuffer = Void
     alias WlCallback = Void
+    alias WlCompositor = Void
+    alias WlConnection = Void
+    alias WlDisplay = Void
+    alias WlKeyboard = Void
+    alias WlMessage = Void
+    alias WlPointer = Void
     alias WlRegion = Void
+    alias WlRegistry = Void
+    alias WlSeat = Void
+    alias WlShm = Void
+    alias WlShmPool = Void
+    alias WlSubcompositor = Void
+    alias WlSubsurface = Void
+    alias WlSurface = Void
+    alias WlTouch = Void
+    alias XdgWmBase = Void
 
     struct WlRegistryListener
       global : Pointer(Void), Pointer(WlRegistry), LibC::UInt, Pointer(LibC::Char), LibC::UInt -> Void
@@ -30,6 +34,24 @@ module WaylandClient
       done : Pointer(Void), Pointer(WlCallback), UInt32 -> Void
     end
 
+    struct WlPointerListener
+      enter : Pointer(Void), Pointer(WlPointer), UInt32, Pointer(WlSurface), LibC::Int, LibC::Int -> Void
+      leave : Pointer(Void), Pointer(WlPointer), UInt32, Pointer(WlSurface) -> Void
+      motion : Pointer(Void), Pointer(WlPointer), UInt32, LibC::Int, LibC::Int -> Void
+      button : Pointer(Void), Pointer(WlPointer), UInt32, UInt32, UInt32, UInt32 -> Void
+      axis : Pointer(Void), Pointer(WlPointer), UInt32, UInt32, LibC::Int -> Void
+      frame : Pointer(Void), Pointer(WlPointer) -> Void
+      axis_source : Pointer(Void), Pointer(WlPointer), WlPointerAxisSource -> Void
+      axis_stop : Pointer(Void), Pointer(WlPointer), UInt32, UInt32 -> Void
+      axis_discrete : Pointer(Void), Pointer(WlPointer), UInt32, Int32 -> Void
+      axis_value120 : Pointer(Void), Pointer(WlPointer), UInt32, Int32 -> Void
+    end
+
+    struct WlSeatListener
+      capabilities : Pointer(Void), Pointer(WlSeat), WlSeatCapability -> Void
+      name : Pointer(Void), Pointer(WlSeat), Pointer(LibC::Char) -> Void
+    end
+
     struct WlInterface
       name : LibC::Char*
       version : LibC::Int
@@ -40,8 +62,9 @@ module WaylandClient
     end
 
     $wl_compositor_interface : WlInterface
-    $wl_subcompositor_interface : WlInterface
+    $wl_seat_interface : WlInterface
     $wl_shm_interface : WlInterface
+    $wl_subcompositor_interface : WlInterface
 
     alias WlDisplayUpdateFunc = UInt32, Pointer(Void) -> LibC::Int
     alias WlDisplayGlobalFunc = Pointer(WlDisplay), UInt32, Pointer(LibC::Char), UInt32, Pointer(Void) -> LibC::Int
@@ -95,6 +118,10 @@ module WaylandClient
       wl_surface_set_opaque_region_shim(Pointer(WlSurface), Pointer(WlRegion)) : Void
     fun wl_surface_set_input_region =
       wl_surface_set_input_region_shim(Pointer(WlSurface), Pointer(WlRegion)) : Void
+
+    fun wl_seat_get_pointer = wl_seat_get_pointer_shim(Pointer(WlSeat)) : Pointer(WlPointer)
+    fun wl_pointer_add_listener = wl_pointer_add_listener_shim(Pointer(WlPointer), Pointer(WlPointerListener), Pointer(Void)) : Void
+    fun wl_seat_add_listener = wl_seat_add_listener_shim(Pointer(WlSeat), Pointer(WlSeatListener), Pointer(Void)) : Void
 
     # Enums:
     enum WlShmFormat : LibC::UInt
@@ -156,6 +183,21 @@ module WaylandClient
       YVU422      = 0x36315659 # 3 plane YCbCr format, 2x1 subsampled Cr (1) and Cb (2) planes
       YUV444      = 0x34325559 # 3 plane YCbCr format, non-subsampled Cb (1) and Cr (2) planes
       YVU444      = 0x34325659 # 3 plane YCbCr format, non-subsampled Cr (1) and Cb (2) planes
+    end
+
+    @[Flags]
+    enum WlSeatCapability : LibC::UInt
+      None     = 0
+      Pointer  = 1
+      Keyboard = 2
+      Touch    = 4
+    end
+
+    enum WlPointerAxisSource : UInt32
+      Wheel      = 0
+      Finger     = 1
+      Continuous = 2
+      Tilt       = 3
     end
   end
 end

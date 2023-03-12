@@ -60,6 +60,10 @@ module WaylandClient
       end
     end
 
+    def seat
+      @registry.seat
+    end
+
     def create_frame(surface,
                      title = nil,
                      app_id = nil,

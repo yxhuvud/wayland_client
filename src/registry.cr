@@ -1,4 +1,5 @@
 require "./lib/lib_wayland_client"
+require "./seat"
 require "./xdg"
 
 module WaylandClient
@@ -6,6 +7,7 @@ module WaylandClient
   class Registry
     alias WlRegistry = LibWaylandClient::WlRegistry
 
+    getter seat : Seat?
     getter xdg : Xdg?
 
     def initialize(display)
@@ -17,9 +19,9 @@ module WaylandClient
       )
 
       @compositor = Pointer(LibWaylandClient::WlCompositor).null
-      @subcompositor = Pointer(LibWaylandClient::WlSubcompositor).null
       @shm = Pointer(LibWaylandClient::WlShm).null
-
+      @subcompositor = Pointer(LibWaylandClient::WlSubcompositor).null
+      @seat = nil
       @xdg = nil
 
       wl_registry = LibWaylandClient.wl_display_get_registry(display)
@@ -34,10 +36,13 @@ module WaylandClient
       case interface_name
       when "wl_compositor"
         @compositor = bind_interface(LibWaylandClient.wl_compositor_interface, LibWaylandClient::WlCompositor)
-      when "wl_subcompositor"
-        @subcompositor = bind_interface(LibWaylandClient.wl_subcompositor_interface, LibWaylandClient::WlSubcompositor)
+      when "wl_seat"
+        base = bind_interface(LibWaylandClient.wl_seat_interface, LibWaylandClient::WlSeat)
+        @seat = Seat.new(base)
       when "wl_shm"
         @shm = bind_interface(LibWaylandClient.wl_shm_interface, LibWaylandClient::WlShm)
+      when "wl_subcompositor"
+        @subcompositor = bind_interface(LibWaylandClient.wl_subcompositor_interface, LibWaylandClient::WlSubcompositor)
       when "xdg_wm_base"
         base = bind_interface(LibXdgShell.xdg_wm_base_interface, LibWaylandClient::XdgWmBase)
         @xdg = Xdg.new(base)
@@ -50,12 +55,16 @@ module WaylandClient
       @compositor.not_nil!
     end
 
-    def subcompositor
-      @subcompositor.not_nil!
+    def seat
+      @seat.not_nil!
     end
 
     def shm
       @shm.not_nil!
+    end
+
+    def subcompositor
+      @subcompositor.not_nil!
     end
 
     def xdg

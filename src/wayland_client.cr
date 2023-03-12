@@ -28,11 +28,24 @@ spawn do
   loop { setup_counter.measure { |value| puts "config: %s" % value } }
 end
 
+class PointerHandler
+  include WaylandClient::PointerHandler
+
+  def process
+    if pointer_event.button_state
+      p "button pressed: %s " % pointer_event.button
+      p pointer_event
+    end
+  end
+end
+
 WaylandClient.display do |display|
   surface = display.create_surface(
     buffer_pool: WaylandClient::Buffer.new(:memory, WaylandClient::Format::XRGB8888),
     opaque: true
   )
+  display.seat.pointer_handler = PointerHandler.new
+
   # Creates an async subsurface, as there is (currently) no way to use
   # libdecor with async top surfaces. An async surface is necessary or
   # else there will be update events only when the outer frame wake up

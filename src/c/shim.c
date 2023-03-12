@@ -134,6 +134,21 @@ wl_subsurface_destroy_shim(struct wl_subsurface *sub) {
   wl_subsurface_destroy(sub);
 }
 
+struct wl_pointer *
+wl_seat_get_pointer_shim(struct wl_seat *seat) {
+  return wl_seat_get_pointer(seat);
+}
+
+void
+wl_pointer_add_listener_shim(struct wl_pointer *pointer, struct wl_pointer_listener *listener, void *data) {
+  wl_pointer_add_listener(pointer, listener, data);
+}
+
+void
+wl_seat_add_listener_shim(struct wl_seat *seat, struct wl_seat_listener *listener, void *data) {
+  wl_seat_add_listener(seat, listener, data);
+}
+
 struct xdg_surface *
 xdg_wm_base_get_xdg_surface_shim(struct xdg_wm_base *xdg_wm_base, struct wl_surface *surface)
 {
