@@ -178,11 +178,4 @@ xdg_surface_ack_configure_shim(struct xdg_surface *xdg_surface, uint32_t serial)
 {
         xdg_surface_ack_configure(xdg_surface, serial);
 }
-
-
-
-/* int */
-/* wl_display_add_listener_shim(struct wl_display *wl_display, */
-/*                         const struct wl_display_listener *listener, void *data) { */
-/*   return wl_display_add_listener(wl_display, listener, data); */
-/* } */
+ 
