@@ -1,10 +1,13 @@
 module WaylandClient
   class Region
     def initialize(compositor, @surface : Surface, add_all = false)
-      @region = LibWaylandClient.wl_compositor_create_region(compositor)
-      if add_all
-        add(0, 0, Int32::MAX, Int32::MAX)
-      end
+      @region =
+        if add_all
+          # Region commands with null region affect the whole thing
+          Pointer(LibWaylandClient::WlRegion).null
+        else
+          LibWaylandClient.wl_compositor_create_region(compositor)
+        end
     end
 
     def to_unsafe
@@ -31,7 +34,7 @@ module WaylandClient
     end
 
     def finalize
-      LibWaylandClient.wl_region_destroy(self)
+      LibWaylandClient.wl_region_destroy(@region) if @region
     end
   end
 end
