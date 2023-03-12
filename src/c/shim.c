@@ -37,6 +37,11 @@ wl_surface_set_opaque_region_shim(struct wl_surface *wl_surface, struct wl_regio
   wl_surface_set_opaque_region(wl_surface, wl_region);
 }
 
+void
+wl_surface_set_input_region_shim(struct wl_surface *wl_surface, struct wl_region *wl_region) {
+  wl_surface_set_input_region(wl_surface, wl_region);
+}
+
 struct wl_region *
 wl_compositor_create_region_shim(struct wl_compositor *compositor) {
   return wl_compositor_create_region(compositor);

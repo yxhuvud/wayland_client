@@ -93,6 +93,8 @@ module WaylandClient
       wl_compositor_create_region_shim(Pointer(WlCompositor)) : Pointer(WlRegion)
     fun wl_surface_set_opaque_region =
       wl_surface_set_opaque_region_shim(Pointer(WlSurface), Pointer(WlRegion)) : Void
+    fun wl_surface_set_input_region =
+      wl_surface_set_input_region_shim(Pointer(WlSurface), Pointer(WlRegion)) : Void
 
     # Enums:
     enum WlShmFormat : LibC::UInt

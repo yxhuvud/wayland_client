@@ -12,9 +12,10 @@ module WaylandClient
     getter display : Display
     getter pool : WaylandClient::Buffer::BufferPool
 
-    def initialize(@registry, opaque : Bool, @display, @pool) # todo: listener
+    def initialize(@registry, opaque : Bool, @display, @pool, accepts_input : Bool = true) # todo: listener
       @surface = WaylandClient::LibWaylandClient.wl_compositor_create_surface(registry.compositor)
 
+      region.accepts_input if !accepts_input
       region(add_all: true).opaque! if opaque
     end
 

@@ -26,9 +26,8 @@ module WaylandClient
       LibWaylandClient.wl_surface_set_opaque_region(@surface, self)
     end
 
-    def accepts_input=(value : Bool)
-      #       wl_surface_set_input_region
-      #      raise "TOODODO"
+    def accepts_input
+      LibWaylandClient.wl_surface_set_input_region(@surface, self)
     end
 
     def finalize
