@@ -34,17 +34,28 @@ module WaylandClient
       done : Pointer(Void), Pointer(WlCallback), UInt32 -> Void
     end
 
+    alias WlPointerListenerEnter = Pointer(Void), Pointer(WlPointer), UInt32, Pointer(WlSurface), LibC::Int, LibC::Int -> Void
+    alias WlPointerListenerLeave = Pointer(Void), Pointer(WlPointer), UInt32, Pointer(WlSurface) -> Void
+    alias WlPointerListenerMotion = Pointer(Void), Pointer(WlPointer), UInt32, LibC::Int, LibC::Int -> Void
+    alias WlPointerListenerButton = Pointer(Void), Pointer(WlPointer), UInt32, UInt32, UInt32, UInt32 -> Void
+    alias WlPointerListenerAxis = Pointer(Void), Pointer(WlPointer), UInt32, UInt32, LibC::Int -> Void
+    alias WlPointerListenerFrame = Pointer(Void), Pointer(WlPointer) -> Void
+    alias WlPointerListenerAxisSource = Pointer(Void), Pointer(WlPointer), WlPointerAxisSource -> Void
+    alias WlPointerListenerAxisStop = Pointer(Void), Pointer(WlPointer), UInt32, UInt32 -> Void
+    alias WlPointerListenerAxisDiscrete = Pointer(Void), Pointer(WlPointer), UInt32, Int32 -> Void
+    alias WlPointerListenerAxisValue120 = Pointer(Void), Pointer(WlPointer), UInt32, Int32 -> Void
+
     struct WlPointerListener
-      enter : Pointer(Void), Pointer(WlPointer), UInt32, Pointer(WlSurface), LibC::Int, LibC::Int -> Void
-      leave : Pointer(Void), Pointer(WlPointer), UInt32, Pointer(WlSurface) -> Void
-      motion : Pointer(Void), Pointer(WlPointer), UInt32, LibC::Int, LibC::Int -> Void
-      button : Pointer(Void), Pointer(WlPointer), UInt32, UInt32, UInt32, UInt32 -> Void
-      axis : Pointer(Void), Pointer(WlPointer), UInt32, UInt32, LibC::Int -> Void
-      frame : Pointer(Void), Pointer(WlPointer) -> Void
-      axis_source : Pointer(Void), Pointer(WlPointer), WlPointerAxisSource -> Void
-      axis_stop : Pointer(Void), Pointer(WlPointer), UInt32, UInt32 -> Void
-      axis_discrete : Pointer(Void), Pointer(WlPointer), UInt32, Int32 -> Void
-      axis_value120 : Pointer(Void), Pointer(WlPointer), UInt32, Int32 -> Void
+      enter : WlPointerListenerEnter
+      leave : WlPointerListenerLeave
+      motion : WlPointerListenerMotion
+      button : WlPointerListenerButton
+      axis : WlPointerListenerAxis
+      frame : WlPointerListenerFrame
+      axis_source : WlPointerListenerAxisSource
+      axis_stop : WlPointerListenerAxisStop
+      axis_discrete : WlPointerListenerAxisDiscrete
+      axis_value120 : WlPointerListenerAxisValue120
     end
 
     struct WlSeatListener

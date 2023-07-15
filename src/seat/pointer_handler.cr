@@ -9,26 +9,45 @@ module WaylandClient
       def initialize
         @pointer_event = PointerEvent.new
         @callback = LibWaylandClient::WlPointerListener.new(
-          enter: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), UInt32, Pointer(LibWaylandClient::WlSurface), LibC::Int, LibC::Int, Void).new do |data, pointer, serial, surface, x, y|
+          enter: LibWaylandClient::WlPointerListenerEnter.new do |data, pointer, serial, surface, x, y|
             data.as(self).enter(serial, surface, x, y)
           end,
-          leave: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), UInt32, Pointer(LibWaylandClient::WlSurface), Void).new do |data, pointer, serial, surface|
+
+          leave: LibWaylandClient::WlPointerListenerLeave.new do |data, pointer, serial, surface|
             data.as(self).leave(serial, surface)
           end,
-          motion: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), UInt32, LibC::Int, LibC::Int, Void).new do |data, pointer, time, x, y|
+
+          motion: LibWaylandClient::WlPointerListenerMotion.new do |data, pointer, time, x, y|
             data.as(self).motion(time, x, y)
           end,
-          button: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), UInt32, UInt32, UInt32, UInt32, Void).new do |data, pointer, serial, time, button, state|
+
+          button: LibWaylandClient::WlPointerListenerButton.new do |data, pointer, serial, time, button, state|
             data.as(self).button(time, serial, button, state)
           end,
-          axis: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), UInt32, UInt32, LibC::Int, Void).new do |data, pointer, time, axis, value|
+
+          axis: LibWaylandClient::WlPointerListenerAxis.new do |data, pointer, time, axis, value|
             data.as(self).axis(time, axis, value)
           end,
-          frame: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), Void).new { |data, pointer| data.as(self).frame },
-          axis_source: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), LibWaylandClient::WlPointerAxisSource, Void).new { |data, pointer, axis_source| data.as(self).axis_source(axis_source) },
-          axis_stop: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), UInt32, UInt32, Void).new { |data, pointer, time, axis| data.as(self).axis_stop(time, axis) },
-          axis_discrete: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), UInt32, Int32, Void).new { |data, pointer, axis, discrete| data.as(self).axis_discrete(axis, discrete * 120) },
-          axis_value120: Proc(Pointer(Void), Pointer(LibWaylandClient::WlPointer), UInt32, Int32, Void).new { |data, pointer, axis, discrete| data.as(self).axis_discrete(axis, discrete) },
+
+          frame: LibWaylandClient::WlPointerListenerFrame.new do |data, pointer|
+            data.as(self).frame
+          end,
+
+          axis_source: LibWaylandClient::WlPointerListenerAxisSource.new do |data, pointer, axis_source|
+            data.as(self).axis_source(axis_source)
+          end,
+
+          axis_stop: LibWaylandClient::WlPointerListenerAxisStop.new do |data, pointer, time, axis|
+            data.as(self).axis_stop(time, axis)
+          end,
+
+          axis_discrete: LibWaylandClient::WlPointerListenerAxisDiscrete.new do |data, pointer, axis, discrete|
+            data.as(self).axis_discrete(axis, discrete * 120)
+          end,
+
+          axis_value120: LibWaylandClient::WlPointerListenerAxisValue120.new do |data, pointer, axis, discrete|
+            data.as(self).axis_discrete(axis, discrete)
+          end,
         )
       end
 
