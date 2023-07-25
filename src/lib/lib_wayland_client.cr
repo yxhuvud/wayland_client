@@ -1,7 +1,6 @@
 module WaylandClient
   @[Link("wayland-client", ldflags: "#{__DIR__}/../../build/shim.o")]
   lib LibWaylandClient
-    alias WlArray = Void
     alias WlBuffer = Void
     alias WlCallback = Void
     alias WlCompositor = Void
@@ -20,6 +19,12 @@ module WaylandClient
     alias WlSurface = Void
     alias WlTouch = Void
     alias XdgWmBase = Void
+
+    struct WlArray
+      size : LibC::SizeT
+      alloc : LibC::SizeT
+      data : Void*
+    end
 
     struct WlRegistryListener
       global : Pointer(Void), Pointer(WlRegistry), LibC::UInt, Pointer(LibC::Char), LibC::UInt -> Void
@@ -56,6 +61,22 @@ module WaylandClient
       axis_stop : WlPointerListenerAxisStop
       axis_discrete : WlPointerListenerAxisDiscrete
       axis_value120 : WlPointerListenerAxisValue120
+    end
+
+    alias WlKeyboardListenerKeymap = Pointer(Void), Pointer(WlKeyboard), UInt32, Int32, UInt32 -> Void
+    alias WlKeyboardListenerEnter = Pointer(Void), Pointer(WlKeyboard), UInt32, Pointer(WlSurface), Pointer(WlArray) -> Void
+    alias WlKeyboardListenerLeave = Pointer(Void), Pointer(WlKeyboard), UInt32, Pointer(WlSurface) -> Void
+    alias WlKeyboardListenerKey = Pointer(Void), Pointer(WlKeyboard), UInt32, UInt32, UInt32, WlKeyboardKeyState -> Void
+    alias WlKeyboardListenerModifiers = Pointer(Void), Pointer(WlKeyboard), UInt32, UInt32, UInt32, UInt32, UInt32 -> Void
+    alias WlKeyboardListenerRepeatInfo = Pointer(Void), Pointer(WlKeyboard), Int32, Int32 -> Void
+
+    struct WlKeyboardListener
+      keymap : WlKeyboardListenerKeymap
+      enter : WlKeyboardListenerEnter
+      leave : WlKeyboardListenerLeave
+      key : WlKeyboardListenerKey
+      modifiers : WlKeyboardListenerModifiers
+      repeat_info : WlKeyboardListenerRepeatInfo
     end
 
     struct WlSeatListener
@@ -132,6 +153,8 @@ module WaylandClient
 
     fun wl_seat_get_pointer = wl_seat_get_pointer_shim(Pointer(WlSeat)) : Pointer(WlPointer)
     fun wl_pointer_add_listener = wl_pointer_add_listener_shim(Pointer(WlPointer), Pointer(WlPointerListener), Pointer(Void)) : Void
+    fun wl_seat_get_keyboard = wl_seat_get_keyboard_shim(Pointer(WlSeat)) : Pointer(WlKeyboard)
+    fun wl_keyboard_add_listener = wl_keyboard_add_listener_shim(Pointer(WlKeyboard), Pointer(WlKeyboardListener), Pointer(Void)) : Void
     fun wl_seat_add_listener = wl_seat_add_listener_shim(Pointer(WlSeat), Pointer(WlSeatListener), Pointer(Void)) : Void
 
     # Enums:
@@ -209,6 +232,35 @@ module WaylandClient
       Finger     = 1
       Continuous = 2
       Tilt       = 3
+    end
+
+    enum KeyboardEventMask
+      Keymap     = 0
+      Enter      = 1
+      Leave      = 2
+      Key        = 3
+      Modifiers  = 4
+      RepeatInfo = 5
+    end
+
+    enum WlKeyboardKeymapFormat
+      NoKeymap = 0
+      XkbV1    = 1
+    end
+
+    enum WlKeyboardKeyState : UInt32
+      Released = 0
+      Pressed  = 1
+    end
+
+    enum TouchEventMask # WlTouchEvent?
+      Down        = 0
+      Up          = 1
+      Motion      = 2
+      Frame       = 3
+      Cancel      = 4
+      Shape       = 5
+      Orientation = 6
     end
   end
 end

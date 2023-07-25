@@ -144,6 +144,16 @@ wl_pointer_add_listener_shim(struct wl_pointer *pointer, struct wl_pointer_liste
   wl_pointer_add_listener(pointer, listener, data);
 }
 
+struct wl_keyboard *
+wl_seat_get_keyboard_shim(struct wl_seat *seat) {
+  return wl_seat_get_keyboard(seat);
+}
+
+void
+wl_keyboard_add_listener_shim(struct wl_keyboard *keyboard, struct wl_keyboard_listener *listener, void *data) {
+  wl_keyboard_add_listener(keyboard, listener, data);
+}
+
 void
 wl_seat_add_listener_shim(struct wl_seat *seat, struct wl_seat_listener *listener, void *data) {
   wl_seat_add_listener(seat, listener, data);

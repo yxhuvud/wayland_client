@@ -1,14 +1,10 @@
 require "./lib/lib_wayland_client"
 require "./seat/pointer_handler"
+require "./seat/keyboard_handler"
 
 module WaylandClient
   alias PointerHandler = Seat::PointerHandler
-
-  module KeyboardHandler
-    class Base
-      include KeyboardHandler
-    end
-  end
+  alias KeyboardHandler = Seat::KeyboardHandler
 
   module TouchHandler
     class Base
@@ -46,7 +42,7 @@ module WaylandClient
     end
 
     def keyboard?
-      @keyboard_enabled1
+      @keyboard_enabled
     end
 
     def touch?
@@ -66,7 +62,8 @@ module WaylandClient
     end
 
     def keyboard_handler=(handler : KeyboardHandler)
-      # TODO listener
+      keyboard = LibWaylandClient.wl_seat_get_keyboard(@seat_base)
+      LibWaylandClient.wl_keyboard_add_listener(keyboard, handler.listener, handler.as(Void*))
       @keyboard_handler = handler
     end
 

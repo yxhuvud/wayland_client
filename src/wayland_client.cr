@@ -34,8 +34,15 @@ class PointerHandler
   def process
     if pointer_event.button_state
       p "button pressed: %s " % pointer_event.button
-      p pointer_event
     end
+  end
+end
+
+class KeyboardHandler
+  include WaylandClient::KeyboardHandler
+
+  def key(time, key, state, serial)
+    p "keyboard key: %s, modifiers: %s" % {key, modifiers.depressed.to_s}
   end
 end
 
@@ -45,6 +52,7 @@ WaylandClient.display do |display|
     opaque: true
   )
   display.seat.pointer_handler = PointerHandler.new
+  display.seat.keyboard_handler = KeyboardHandler.new
 
   # Creates an async subsurface, as there is (currently) no way to use
   # libdecor with async top surfaces. An async surface is necessary or
