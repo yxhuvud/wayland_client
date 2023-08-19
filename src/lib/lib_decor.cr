@@ -45,22 +45,13 @@ module WaylandClient
     struct Configuration
       serial : UInt32
       has_window_state : Bool
-      window_state : LibC::Int # Well enum.
+      window_state : WindowState
       has_size : Bool
       window_width : LibC::Int
       window_height : LibC::Int
-      # struct libdecor_configuration {
-      #   uint32_t serial;
-      #   bool has_window_state;
-      #   enum libdecor_window_state window_state;
-      #   bool has_size;
-      #   int window_width;
-      #   int window_height;
-      #};
     end
 
     alias Frame = Void
-#    alias Configuration = Void
     alias Context = Void
     alias State = Void
 
@@ -100,5 +91,8 @@ module WaylandClient
 
     fun state_new = libdecor_state_new(LibC::Int, LibC::Int) : Pointer(State)
     fun state_free = libdecor_state_free(Pointer(State))
+
+    fun set_fullscreen = libdecor_frame_set_fullscreen(Pointer(Frame), Pointer(LibWaylandClient::WlOutput)) : Void
+    fun unset_fullscreen = libdecor_frame_unset_fullscreen(Pointer(Frame)) : Void
   end
 end

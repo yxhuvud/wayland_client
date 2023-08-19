@@ -32,7 +32,10 @@ module WaylandClient
         config_copy = Pointer(LibDecor::Configuration).malloc
         config_copy.copy_from(config, 1)
         surface.pool.callback = Proc(Nil).new { perform_configure(config_copy) }
-        # Make resizing less of a lag-fest. Gnome-shell lack of back pressure :(
+        # Make resizing less of a lag-fest. Gnome-shell lack of back
+        # pressure :( On newer gnomes I've also had full och system
+        # crashes with the sleep commented out. They may happen
+        # regardless, but sheesh.
         sleep 0.0015
       end
 
@@ -121,6 +124,15 @@ module WaylandClient
 
       def commit(config, state)
         LibDecor.frame_commit(self, state, config)
+      end
+
+      # TODO: Support selecting output.
+      def fullscreen
+        LibDecor.set_fullscreen(self, Pointer(LibWaylandClient::WlOutput).null)
+      end
+
+      def unfullscreen
+        LibDecor.unset_fullscreen(self)
       end
     end
   end

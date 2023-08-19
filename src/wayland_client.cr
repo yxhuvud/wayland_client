@@ -31,9 +31,24 @@ end
 class PointerHandler
   include WaylandClient::PointerHandler
 
+  property fullscreen
+
+  def initialize(@frame : WaylandClient::Decor::Frame)
+    super()
+    @fullscreen = false
+  end
+
   def process
     if pointer_event.button_state
       p "button pressed: %s " % pointer_event.button
+      # Commented due to libdecor bug
+      # if fullscreen
+      #   @frame.unfullscreen
+      #   @fullscreen = false
+      # else
+      #   @frame.fullscreen
+      #   @fullscreen = true
+      # end
     end
   end
 end
@@ -51,8 +66,6 @@ WaylandClient.display do |display|
     buffer_pool: WaylandClient::Buffer.new(:memory, WaylandClient::Format::XRGB8888),
     opaque: true
   )
-  display.seat.pointer_handler = PointerHandler.new
-  display.seat.keyboard_handler = KeyboardHandler.new
 
   # Creates an async subsurface, as there is (currently) no way to use
   # libdecor with async top surfaces. An async surface is necessary or
@@ -68,7 +81,7 @@ WaylandClient.display do |display|
 
   # The block is called on initialization and on resize, and
   # potentially in more cases.
-  display.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
+  frame = display.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
     setup_counter.register
 
     # The base surface needs an attached buffer, or there will be no
@@ -90,6 +103,9 @@ WaylandClient.display do |display|
     # frame is requested it will run both!
     subsurface.surface.request_frame(frame_callback)
   end
+
+  display.seat.pointer_handler = PointerHandler.new(frame)
+  display.seat.keyboard_handler = KeyboardHandler.new
 
   display.wait_loop
 

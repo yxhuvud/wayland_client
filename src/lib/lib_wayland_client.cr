@@ -19,6 +19,7 @@ module WaylandClient
     alias WlSurface = Void
     alias WlTouch = Void
     alias XdgWmBase = Void
+    alias WlOutput = Void
 
     struct WlArray
       size : LibC::SizeT
