@@ -71,8 +71,9 @@ module WaylandClient
       decorator.frame(surface, title, app_id, configure_callback)
     end
 
-    def create_surface(buffer_pool, opaque)
-      WaylandClient::Surface.new(registry, opaque, self, buffer_pool)
+    def create_surface(kind, format, opaque, accepts_input = true)
+      buffer_pool = format.pool(kind)
+      format.surface(self, buffer_pool, opaque, accepts_input)
     end
 
     def finalize

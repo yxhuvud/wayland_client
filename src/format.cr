@@ -4,6 +4,29 @@ module WaylandClient
   module Format
     alias Formats = WaylandClient::LibWaylandClient::WlShmFormat
 
+    module Base
+      def pool(kind)
+        if kind == :memory
+          WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory(self)).new
+        else
+          raise "NotImplemented"
+        end
+      end
+
+      def surface(display, buffer_pool, opaque, accepts_input = true)
+        WaylandClient::Surface(self).new(
+          display,
+          buffer_pool,
+          opaque,
+          accepts_input,
+        )
+      end
+
+      def subsurface(surface, kind, opaque, sync = true, size = nil)
+        Subsurface(self).new(surface, kind, opaque, sync)
+      end
+    end
+
     # Endian make the order a mess.
     record(ARGB8888, blue : UInt8, green : UInt8, red : UInt8, alpha : UInt8) do
       extend Base

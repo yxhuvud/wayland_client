@@ -1,13 +1,15 @@
 module WaylandClient
-  class Subsurface
-    getter surface
-    getter parent
+  class Subsurface(Format)
+    getter surface : Surface(Format)
+    getter parent : GenericSurface
 
-    def initialize(@parent : Surface, sync, opaque, pool)
-      pool ||= @parent.pool.class.new
-      @surface = Surface.new(parent.registry, opaque, parent.display, pool)
+    def initialize(@parent : GenericSurface, kind, opaque, sync)
+      buffer_pool = Format.pool(kind)
+      @surface = Format.surface(parent.display, buffer_pool, opaque)
       @subsurface = WaylandClient::LibWaylandClient.wl_subcompositor_get_subsurface(
-        parent.registry.subcompositor, surface, parent
+        parent.registry.subcompositor,
+        surface,
+        parent
       )
       self.sync = sync
     end

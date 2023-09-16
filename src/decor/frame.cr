@@ -3,7 +3,7 @@ module WaylandClient
     class Frame
       getter :decor, :surface
 
-      def initialize(@decor : Decor, @surface : Surface, @configure_callback : Proc(LibC::Int, LibC::Int, LibDecor::WindowState, Void), @initial_size = {400, 300})
+      def initialize(@decor : Decor, @surface : GenericSurface, @configure_callback : Proc(LibC::Int, LibC::Int, LibDecor::WindowState, Void), @initial_size = {400, 300})
         @interface = LibDecor::FrameInterface.new(
           configure: Proc(Pointer(LibDecor::Frame), Pointer(LibDecor::Configuration), Pointer(Void), Void).new { |frame, config, data|
             data.as(Frame).configure(config)
@@ -23,7 +23,7 @@ module WaylandClient
       end
 
       def configure(config)
-        return perform_configure(config) if surface.pool.available?
+        return perform_configure(config) if surface.buffer_pool.available?
 
         # If there is no available buffer, copy config and perform
         # the configuration later once there is a buffer available.
@@ -31,7 +31,7 @@ module WaylandClient
         # free it immediately after the call to configure.
         config_copy = Pointer(LibDecor::Configuration).malloc
         config_copy.copy_from(config, 1)
-        surface.pool.callback = Proc(Nil).new { perform_configure(config_copy) }
+        surface.buffer_pool.callback = Proc(Nil).new { perform_configure(config_copy) }
         # Make resizing less of a lag-fest. Gnome-shell lack of back
         # pressure :( On newer gnomes I've also had full och system
         # crashes with the sleep commented out. They may happen

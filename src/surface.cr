@@ -5,16 +5,19 @@ require "./buffer/pool"
 require "./surface/frame_callback"
 
 module WaylandClient
-  class Surface
+  module GenericSurface
+  end
+
+  class Surface(Format)
+    include GenericSurface
+
     getter surface : LibWaylandClient::WlSurface*
-    getter registry : Registry
     getter(frame_handler) { FrameCallback.new(self) }
     getter display : Display
-    getter pool : WaylandClient::Buffer::BufferPool
+    getter buffer_pool : WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory(Format))
 
-    def initialize(@registry, opaque : Bool, @display, @pool, accepts_input : Bool = true) # todo: listener
+    def initialize(@display, @buffer_pool, opaque, accepts_input = true) # todo: listener
       @surface = WaylandClient::LibWaylandClient.wl_compositor_create_surface(registry.compositor)
-
       region.accepts_input if !accepts_input
       region(add_all: true).opaque! if opaque
     end
@@ -52,25 +55,26 @@ module WaylandClient
     # Warning: Will give a different buffer each time. Call this only
     # once each time an update is to happen.
     def attach_buffer
-      buffer = pool.checkout(display)
+      buffer = buffer_pool.checkout(display)
       attach_buffer(buffer)
       buffer
     end
 
     def resize(x, y)
-      pool.resize(x, y)
+      buffer_pool.resize(x, y)
     end
 
     def size
-      pool.size
+      sz = buffer_pool.size
+      {x: sz[0], y: sz[1]}
     end
 
     def damage_all
       damage_buffer(0, 0, Int32::MAX, Int32::MAX)
     end
 
-    def create_subsurface(opaque, sync = true, pool = nil)
-      Subsurface.new(self, sync, opaque, pool)
+    def create_subsurface(kind, format, opaque, sync = true)
+      format.subsurface(self, kind, opaque, sync)
     end
 
     def commit
@@ -79,6 +83,10 @@ module WaylandClient
 
     def close
       LibWaylandClient.wl_surface_destroy(self)
+    end
+
+    def registry
+      @display.registry
     end
   end
 end

@@ -6,7 +6,7 @@ module WaylandClient
     getter frame_handler : Callback?
     getter callback_count
 
-    def initialize(@surface : Surface)
+    def initialize(@surface : GenericSurface)
       @callback_count = 0
       @callback = LibWaylandClient::WlCallbackListener.new(
         done: Proc(Pointer(Void), Pointer(LibWaylandClient::WlCallback), UInt32, Void).new do |data, cb, time|
@@ -36,7 +36,7 @@ module WaylandClient
       skip_next = callback_count > 1
 
       if handler = @frame_handler
-        if surface.pool.available?
+        if surface.buffer_pool.available?
           handler.call(time)
         else
           # FIXME: add pool callback unless there is already one (to

@@ -1,6 +1,6 @@
 module WaylandClient
   class Region
-    def initialize(compositor, @surface : Surface, add_all = false)
+    def initialize(compositor, @surface : GenericSurface, add_all = false)
       @region =
         if add_all
           # Region commands with null region affect the whole thing
