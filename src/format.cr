@@ -4,16 +4,21 @@ module WaylandClient
   module Format
     alias Formats = WaylandClient::LibWaylandClient::WlShmFormat
 
-    record(ARGB8888, alpha : UInt8, red : UInt8, green : UInt8, blue : UInt8) do
+    # Endian make the order a mess.
+    record(ARGB8888, blue : UInt8, green : UInt8, red : UInt8, alpha : UInt8) do
+      extend Base
+
+      def initialize(@red, @green, @blue, @alpha); end
+
       def self.shm_format
         Formats::ARGB8888
       end
     end
 
-    record(XRGB8888, _unused : UInt8, red : UInt8, green : UInt8, blue : UInt8) do
-      def self.new(red : UInt8, green : UInt8, blue : UInt8)
-        new(red, green, blue, 0i8)
-      end
+    record(XRGB8888, blue : UInt8, green : UInt8, red : UInt8, _unused : UInt8) do
+      extend Base
+
+      def initialize(@red, @green, @blue, @_unused=0u8); end
 
       def self.shm_format
         Formats::XRGB8888
