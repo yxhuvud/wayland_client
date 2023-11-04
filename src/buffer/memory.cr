@@ -1,5 +1,5 @@
 require "./pool"
-require "../display"
+require "../registry"
 require "../lib/lib_c"
 
 module WaylandClient
@@ -10,9 +10,9 @@ module WaylandClient
     class Memory(T)
       include ::WaylandClient::Buffer::Buffer
 
-      getter fd, display, pool, x_size, y_size
+      getter fd, registry, pool, x_size, y_size
 
-      def initialize(@display : WaylandClient::Display, @pool : Pool(Memory(T)))
+      def initialize(@registry : WaylandClient::Registry, @pool : Pool(Memory(T)))
         @fd = IO::FileDescriptor.new(LibC.memfd_create("buffer".to_unsafe, 0))
         @closed = false
         @buffer = Pointer(T).null
@@ -87,7 +87,7 @@ module WaylandClient
       end
 
       private def shm
-        display.registry.shm
+        registry.shm
       end
 
       private def pixel_size

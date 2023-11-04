@@ -3,24 +3,15 @@ require "./lib/lib_xdg_shell"
 require "./surface"
 require "./registry"
 require "./decor"
+require "./cursor"
 
 module WaylandClient
   class Display
-    def self.connect
-      display = new(LibWaylandClient.wl_display_connect(nil))
-      raise "Unable to connect" unless display
-
-      yield display
-    ensure
-      display.disconnect if display
-    end
-
-    getter registry
-
     getter decorator : Decor { Decor.new(self) }
 
-    def initialize(@display : Pointer(LibWaylandClient::WlDisplay))
-      @registry = Registry.new(@display)
+    def initialize
+      @display = LibWaylandClient.wl_display_connect(nil)
+      raise "Unable to connect" if @display.null?
       roundtrip
     end
 
@@ -58,22 +49,6 @@ module WaylandClient
           dispatch
         end
       end
-    end
-
-    def seat
-      @registry.seat
-    end
-
-    def create_frame(surface,
-                     title = nil,
-                     app_id = nil,
-                     &configure_callback : LibC::Int, LibC::Int, LibDecor::WindowState -> Void)
-      decorator.frame(surface, title, app_id, configure_callback)
-    end
-
-    def create_surface(kind, format, opaque, accepts_input = true)
-      buffer_pool = format.pool(kind)
-      format.surface(self, buffer_pool, opaque, accepts_input)
     end
 
     def finalize

@@ -5,24 +5,40 @@ module WaylandClient
     alias Formats = WaylandClient::LibWaylandClient::WlShmFormat
 
     module Base
-      def pool(kind)
-        if kind == :memory
+      def pool(kind : Buffer::Kind)
+        if kind.memory?
           WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory(self)).new
         else
-          raise "NotImplemented"
+          raise "NotImplemented: #{kind}"
         end
       end
 
-      def surface(display, buffer_pool, opaque, accepts_input = true)
+      def cursor(client, kind : Buffer::Kind, size, hotspot)
+        surface = surface(client.registry, kind, opaque: false, accepts_input: false)
+        WaylandClient::Cursor(self).new(client, surface, size, hotspot) { |buf| yield buf }
+      end
+
+      def surface(registry, kind : Buffer::Kind, opaque, accepts_input = true)
+        buffer_pool = pool(kind)
+
         WaylandClient::Surface(self).new(
-          display,
+          registry,
           buffer_pool,
           opaque,
           accepts_input,
         )
       end
 
-      def subsurface(surface, kind, opaque, sync = true, size = nil)
+      def surface(registry, buffer_pool, opaque, accepts_input = true)
+        WaylandClient::Surface(self).new(
+          registry,
+          buffer_pool,
+          opaque,
+          accepts_input,
+        )
+      end
+
+      def subsurface(surface, kind : Buffer::Kind, opaque, sync = true, size = nil)
         Subsurface(self).new(surface, kind, opaque, sync)
       end
     end
@@ -41,7 +57,7 @@ module WaylandClient
     record(XRGB8888, blue : UInt8, green : UInt8, red : UInt8, _unused : UInt8) do
       extend Base
 
-      def initialize(@red, @green, @blue, @_unused=0u8); end
+      def initialize(@red, @green, @blue, @_unused = 0u8); end
 
       def self.shm_format
         Formats::XRGB8888

@@ -13,10 +13,10 @@ module WaylandClient
 
     getter surface : LibWaylandClient::WlSurface*
     getter(frame_handler) { FrameCallback.new(self) }
-    getter display : Display
+    getter registry : Registry
     getter buffer_pool : WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory(Format))
 
-    def initialize(@display, @buffer_pool, opaque, accepts_input = true) # todo: listener
+    def initialize(@registry, @buffer_pool, opaque, accepts_input = true) # todo: listener
       @surface = WaylandClient::LibWaylandClient.wl_compositor_create_surface(registry.compositor)
       region.accepts_input if !accepts_input
       region(add_all: true).opaque! if opaque
@@ -55,7 +55,7 @@ module WaylandClient
     # Warning: Will give a different buffer each time. Call this only
     # once each time an update is to happen.
     def attach_buffer
-      buffer = buffer_pool.checkout(display)
+      buffer = buffer_pool.checkout(registry)
       attach_buffer(buffer)
       buffer
     end
@@ -73,7 +73,7 @@ module WaylandClient
       damage_buffer(0, 0, Int32::MAX, Int32::MAX)
     end
 
-    def create_subsurface(kind, format, opaque, sync = true)
+    def create_subsurface(kind : Buffer::Kind, format, opaque, sync = true)
       format.subsurface(self, kind, opaque, sync)
     end
 
@@ -85,8 +85,5 @@ module WaylandClient
       LibWaylandClient.wl_surface_destroy(self)
     end
 
-    def registry
-      @display.registry
-    end
   end
 end

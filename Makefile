@@ -1,4 +1,4 @@
-.PHONY :  spec clean all build init
+.PHONY :  spec clean all build init example
 
 all : 	build spec
 
@@ -16,3 +16,6 @@ clean :
 
 init :
 	mkdir -p build
+
+example : build
+	crystal build examples/complex.cr && ./complex

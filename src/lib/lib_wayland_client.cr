@@ -157,6 +157,7 @@ module WaylandClient
     fun wl_seat_get_keyboard = wl_seat_get_keyboard_shim(Pointer(WlSeat)) : Pointer(WlKeyboard)
     fun wl_keyboard_add_listener = wl_keyboard_add_listener_shim(Pointer(WlKeyboard), Pointer(WlKeyboardListener), Pointer(Void)) : Void
     fun wl_seat_add_listener = wl_seat_add_listener_shim(Pointer(WlSeat), Pointer(WlSeatListener), Pointer(Void)) : Void
+    fun wl_pointer_set_cursor(Pointer(WlPointer), LibC::UInt, Pointer(WlSurface), LibC::Int, LibC::Int) : Void
 
     # Enums:
     enum WlShmFormat : LibC::UInt

@@ -1,12 +1,7 @@
 module WaylandClient
   module Buffer
-    macro new(kind, format)
-      case :{{kind.id}}
-      when :memory # TODO: enum.. # FIXME when multiple kinds are supported: don't need them to be required!
-        WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory({{format.id}})).new
-      else
-        raise "Unreachable"
-      end
+    enum Kind
+      Memory
     end
 
     module BufferPool
@@ -38,7 +33,7 @@ module WaylandClient
         surface.repaint!(self, flush: false) { |buffer| yield buffer }
       end
 
-      def checkout(display : WaylandClient::Display)
+      def checkout(registry : WaylandClient::Registry)
         if buffer = @free_buffers.pop?
           buffer.resize(*size) if wrong_size?(buffer)
           @checked_out &+= 1
@@ -46,7 +41,7 @@ module WaylandClient
         end
 
         @checked_out &+= 1
-        T.new(display, self)
+        T.new(registry, self)
           .tap &.resize(*size)
       end
 

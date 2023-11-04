@@ -8,12 +8,12 @@ module WaylandClient
       record(Modifiers, depressed : UInt32, latched : UInt32, locked : UInt32, group : UInt32) do
         @[Flags]
         enum Modifier : UInt32
-          SHIFT     =    1
+          SHIFT    =    1
           CAPSLOCK =    2
-          CTRL      =    4
-          ALT       = 4104
-          ALTGR     =  128
-          NUMLOCK   =   16
+          CTRL     =    4
+          ALT      = 4104
+          ALTGR    =  128
+          NUMLOCK  =   16
         end
 
         def depressed
@@ -75,8 +75,8 @@ module WaylandClient
 
       def initialize
         @context = LibXkbcommon.xkb_context_new(LibXkbcommon::XkbContextFlags::NoFlags)
-        @state = Pointer(LibXkbcommon::XkbState).null
-        @keymap = Pointer(LibXkbcommon::XkbKeymap).null
+        @state = ::Pointer(LibXkbcommon::XkbState).null
+        @keymap = ::Pointer(LibXkbcommon::XkbKeymap).null
       end
 
       def setup(format, fd, size)
@@ -109,7 +109,7 @@ module WaylandClient
       end
 
       def extract_multiple(wl_array)
-        Slice(UInt32).new(pointer: wl_array.data.as(Pointer(UInt32)), size: wl_array.size // 4)
+        Slice(UInt32).new(pointer: wl_array.data.as(UInt32*), size: wl_array.size // 4)
           .map { |key| extract(key) }.reject &.modifier?
       end
 

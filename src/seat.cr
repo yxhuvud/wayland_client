@@ -1,6 +1,7 @@
 require "./lib/lib_wayland_client"
-require "./seat/pointer_handler"
-require "./seat/keyboard_handler"
+require "./seat/keyboard"
+require "./seat/pointer"
+require "./seat/touch"
 
 module WaylandClient
   alias PointerHandler = Seat::PointerHandler
@@ -15,26 +16,35 @@ module WaylandClient
   class Seat
     getter seat_base
     getter name
-    getter pointer_handler
+    @pointer : Pointer?
+    @keyboard : Keyboard?
+    @touch : Touch?
 
-    def initialize(@seat_base : Pointer(LibWaylandClient::WlSeat))
+    def initialize(@seat_base : LibWaylandClient::WlSeat*)
       @capabilities = LibWaylandClient::WlSeatCapability.new(0)
       @listener = LibWaylandClient::WlSeatListener.new(
-        capabilities: Proc(Pointer(Void), Pointer(LibWaylandClient::WlSeat), LibWaylandClient::WlSeatCapability, Void).new do |seat, base, capabilities|
+        capabilities: Proc(Void*, LibWaylandClient::WlSeat*, LibWaylandClient::WlSeatCapability, Void).new do |seat, base, capabilities|
           seat.as(Seat).setup_capabilities(capabilities)
         end,
-        name: Proc(Pointer(Void), Pointer(LibWaylandClient::WlSeat), Pointer(LibC::Char), Void).new do |_, _, name|
+        name: Proc(Void*, LibWaylandClient::WlSeat*, LibC::Char*, Void).new do |_, _, name|
         end
       )
-      @pointer_handler = PointerHandler::Base.new
-      @keyboard_handler = KeyboardHandler::Base.new
-      @touch_handler = TouchHandler::Base.new
+
+      @pointer = nil
+      @keyboard = nil
+      @touch = nil
 
       @pointer_enabled = false
       @keyboard_enabled = false
       @touch_enabled = false
 
       LibWaylandClient.wl_seat_add_listener(@seat_base, pointerof(@listener), self.as(Void*))
+    end
+
+    def pointer
+      raise "pointer not enabled" unless pointer?
+
+      @pointer ||= Pointer.new(self)
     end
 
     def pointer?
@@ -45,31 +55,28 @@ module WaylandClient
       @keyboard_enabled
     end
 
+    def keyboard
+      raise "keyboard not enabled" unless keyboard?
+
+      @keyboard ||= Keyboard.new(self)
+    end
+
     def touch?
       @touch_enabled
     end
 
+    def touch
+      raise "touch not enabled" unless touch?
+
+      @touch ||= Touch.new(self)
+    end
+
     def setup_capabilities(capabilities)
+      # TODO: Does this need to handle things being disconnected and
+      # reconnected?
       @pointer_enabled = capabilities.pointer?
       @keyboard_enabled = capabilities.keyboard?
       @touch_enabled = capabilities.touch?
-    end
-
-    def pointer_handler=(handler : PointerHandler)
-      pointer = LibWaylandClient.wl_seat_get_pointer(@seat_base)
-      LibWaylandClient.wl_pointer_add_listener(pointer, handler.listener, handler.as(Void*))
-      @pointer_handler = handler
-    end
-
-    def keyboard_handler=(handler : KeyboardHandler)
-      keyboard = LibWaylandClient.wl_seat_get_keyboard(@seat_base)
-      LibWaylandClient.wl_keyboard_add_listener(keyboard, handler.listener, handler.as(Void*))
-      @keyboard_handler = handler
-    end
-
-    def touch_handler=(handler : TouchHandler)
-      # TODO listener
-      @touch_handler = handler
     end
   end
 end

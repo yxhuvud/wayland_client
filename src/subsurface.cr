@@ -5,7 +5,7 @@ module WaylandClient
 
     def initialize(@parent : GenericSurface, kind, opaque, sync)
       buffer_pool = Format.pool(kind)
-      @surface = Format.surface(parent.display, buffer_pool, opaque)
+      @surface = Format.surface(parent.registry, buffer_pool, opaque)
       @subsurface = WaylandClient::LibWaylandClient.wl_subcompositor_get_subsurface(
         parent.registry.subcompositor,
         surface,
@@ -13,6 +13,9 @@ module WaylandClient
       )
       self.sync = sync
     end
+
+    # def position=(x, y)
+    # end
 
     def sync=(value : Bool)
       if value
