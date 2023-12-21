@@ -10,11 +10,11 @@ module WaylandClient
         @pointer_event = PointerEvent.new
         @callback = LibWaylandClient::WlPointerListener.new(
           enter: LibWaylandClient::WlPointerListenerEnter.new do |data, pointer, serial, surface, x, y|
-            data.as(self).enter(serial, surface, x, y)
+            data.as(self).handle_enter(serial, surface, x, y)
           end,
 
           leave: LibWaylandClient::WlPointerListenerLeave.new do |data, pointer, serial, surface|
-            data.as(self).leave(serial, surface)
+            data.as(self).handle_leave(serial, surface)
           end,
 
           motion: LibWaylandClient::WlPointerListenerMotion.new do |data, pointer, time, x, y|
@@ -51,23 +51,33 @@ module WaylandClient
         )
       end
 
-      def process
+      def frame
+      end
+
+      def enter
+      end
+
+      def leave
       end
 
       class Base
         include PointerHandler
       end
 
-      protected def enter(serial, surface, x, y)
+      protected def handle_enter(serial, surface, x, y)
         pointer_event.serial = serial
         pointer_event.surface = surface
         pointer_event.x = x
         pointer_event.y = y
+        enter
+        pointer_event.reset
       end
 
-      protected def leave(serial, surface)
+      protected def handle_leave(serial, surface)
         pointer_event.serial = serial
         pointer_event.surface = surface
+        leave
+        pointer_event.reset
       end
 
       protected def motion(time, x, y)
@@ -93,8 +103,8 @@ module WaylandClient
         end
       end
 
-      protected def frame
-        process
+      protected def handle_frame
+        frame
         pointer_event.reset
       end
 
