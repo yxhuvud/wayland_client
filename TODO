@@ -1,0 +1,48 @@
+* Documentation
+
+* counter
+** DONE improve
+** Record stats.
+*** Percentile frame latency.
+
+* Input
+** DONE mouse
+** DONE key
+** Touch??
+
+* Buffer types
+** DONE Memory
+** DMA
+*** Video  # Do do it with buffer-copying is easy, but how to do it properly?
+*** opengl # To do it properly then someone needs to do crystal EGL bindings, if I understand things right.
+*** vulcan # seems unbaked.
+** Moar formats
+
+* mouse cursors
+** system
+** DONE custom
+
+* window states
+** DONE fullscreen
+Well, go back and check whenever libdecor upgrades. Perhaps not done
+
+* popups
+
+* clipboard
+** drag & drop
+
+* Time
+** accurate instead of exposing raw numbers
+
+* examples
+** Buttons no async
+** Async - camera?
+** GL crystal
+** Video?
+
+* DONE Graceful surface tree close on exit
+* Put wait_loop in WaylandClient#display
+Need to keep track of surfaces to close them in hierarchical order then. Otherwise crash ensue, so
+GC is not the way.
+
+* SPECS!!
