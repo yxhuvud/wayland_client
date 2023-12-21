@@ -43,7 +43,7 @@ module WaylandClient
     end
 
     def repaint!
-      yield attach_buffer
+      yield attached_buffer
       damage_all
       commit
     end
@@ -54,7 +54,7 @@ module WaylandClient
 
     # Warning: Will give a different buffer each time. Call this only
     # once each time an update is to happen.
-    def attach_buffer
+    def attached_buffer
       buffer = buffer_pool.checkout(registry)
       attach_buffer(buffer)
       buffer
@@ -84,6 +84,5 @@ module WaylandClient
     def close
       LibWaylandClient.wl_surface_destroy(self)
     end
-
   end
 end
