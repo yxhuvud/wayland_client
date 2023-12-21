@@ -18,7 +18,7 @@ module WaylandClient
       property discrete_vertical : Int32
 
       def initialize
-        @surface = Pointer(LibWaylandClient::WlSurface).null
+        @surface = ::Pointer(LibWaylandClient::WlSurface).null
         @x = 0
         @y = 0
         @serial = 0

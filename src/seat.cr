@@ -41,6 +41,10 @@ module WaylandClient
       LibWaylandClient.wl_seat_add_listener(@seat_base, pointerof(@listener), self.as(Void*))
     end
 
+    def to_unsafe
+      @seat_base
+    end
+
     def pointer
       raise "pointer not enabled" unless pointer?
 

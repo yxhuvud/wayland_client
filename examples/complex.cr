@@ -30,10 +30,16 @@ class PointerHandler
     @fullscreen = false
   end
 
-  def process
+  def enter
+    @cursor.use(pointer_event.serial)
+  end
+
+  def frame
     if pointer_event.button_state
-      p "button pressed: %s " % pointer_event.button
-      # Commented due to libdecor bug
+      pp pointer_event
+      # Commented due to what I think is a libdecor bug. But I could
+      # be using it wrong too..
+
       # if fullscreen
       #   @frame.unfullscreen
       #   @fullscreen = false
@@ -83,16 +89,13 @@ WaylandClient.connect do |client|
 
     subsurface.surface.repaint!(&.map! { SUBSURFACE_RED })
   end
+
   # The block is called on initialization and on resize, and
   # potentially in more cases.
   frame = client.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
     setup_counter.register
 
     surface.repaint! &.map! { SUBSURFACE_RED }
-    # The base surface needs an attached buffer, or there will be no
-    # window generated, but it actually don't need to be painted as
-    # the subsurface will cover the whole of it.
-    surface.attach_buffer
     surface.commit
 
     # Make sure to paint the subsurface here as it will look wrong on
@@ -110,15 +113,14 @@ WaylandClient.connect do |client|
     # believe is a compositor bug. If it is only set up once it will
     # stop running if there is a configuration event, but if a new
     # frame is requested it will run both!
-
     subsurface.surface.request_frame(frame_callback)
   end
 
-  cursor = client.create_cursor(
+  cursor = WaylandClient::Format::ARGB8888.cursor(
+    client: client,
     kind: :memory,
-    format: WaylandClient::Format::ARGB8888,
-    size: {x: 128, y: 128},
-    hotspot: {x: 0, y: 0}
+    size: {x: 32, y: 32},
+    hotspot: {x: 0, y: 0},
   ) do |buf|
     buf.map! do |x, y|
       if x == 0 || y == 0
@@ -130,12 +132,12 @@ WaylandClient.connect do |client|
       end
     end
   end
-
   client.pointer.handler = PointerHandler.new(frame, cursor)
   client.keyboard.handler = KeyboardHandler.new
 
   client.wait_loop
 
+  subsurface2.close
   subsurface.close
   surface.close
 end

@@ -7,15 +7,19 @@ module WaylandClient
     module Base
       def pool(kind : Buffer::Kind)
         if kind.memory?
-          WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory(self)).new
+          WaylandClient::Buffer::Pool(Buffer::Memory(self)).new
         else
           raise "NotImplemented: #{kind}"
         end
       end
 
-      def cursor(client, kind : Buffer::Kind, size, hotspot)
+      def cursor(client, kind : Buffer::Kind, size, hotspot, &callback : Buffer::Memory(self) -> Void)
         surface = surface(client.registry, kind, opaque: false, accepts_input: false)
-        WaylandClient::Cursor(self).new(client, surface, size, hotspot) { |buf| yield buf }
+        WaylandClient::Cursor(self).new(client, surface, size, hotspot, callback)
+      end
+
+      def cursor_callback(&block : Buffer::Memory(self) -> Void)
+        block
       end
 
       def surface(registry, kind : Buffer::Kind, opaque, accepts_input = true)

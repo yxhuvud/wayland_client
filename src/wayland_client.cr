@@ -59,9 +59,5 @@ module WaylandClient
     def create_surface(kind : Buffer::Kind, format, opaque, accepts_input = true)
       format.surface(registry, kind, opaque, accepts_input)
     end
-
-    def create_cursor(kind : Buffer::Kind, format, size, hotspot)
-      format.cursor(self, kind, size, hotspot) { |buf| yield buf }
-    end
   end
 end

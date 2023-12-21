@@ -144,6 +144,11 @@ wl_pointer_add_listener_shim(struct wl_pointer *pointer, struct wl_pointer_liste
   wl_pointer_add_listener(pointer, listener, data);
 }
 
+void
+wl_pointer_set_cursor_shim(struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, int x, int y) {
+  wl_pointer_set_cursor(pointer, serial, surface, x, y);
+}
+
 struct wl_keyboard *
 wl_seat_get_keyboard_shim(struct wl_seat *seat) {
   return wl_seat_get_keyboard(seat);
