@@ -18,12 +18,19 @@ module WaylandClient
     def initialize
       @display = Display.new
       @registry = Registry.new(@display)
+      @display.roundtrip
+      @registry.seat
+      @display.roundtrip
     end
 
     def client
       yield self
     ensure
       display.disconnect
+    end
+
+    def wait_loop
+      display.wait_loop
     end
 
     def seat
