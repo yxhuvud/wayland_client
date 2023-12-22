@@ -18,10 +18,6 @@ module WaylandClient
         WaylandClient::Cursor(self).new(client, surface, size, hotspot, callback)
       end
 
-      def cursor_callback(&block : Buffer::Memory(self) -> Void)
-        block
-      end
-
       def surface(registry, kind : Buffer::Kind, opaque, accepts_input = true)
         buffer_pool = pool(kind)
 
