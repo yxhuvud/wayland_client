@@ -82,6 +82,7 @@ WaylandClient.connect do |client|
     kind: :memory,
     format: WaylandClient::Format::ARGB8888,
     opaque: true,
+    position: {50, 50}
   )
 
   frame_callback = Proc(UInt32, Nil).new do |time|

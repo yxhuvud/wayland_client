@@ -38,8 +38,8 @@ module WaylandClient
         )
       end
 
-      def subsurface(surface, kind : Buffer::Kind, opaque, sync = true, size = nil)
-        Subsurface(self).new(surface, kind, opaque, sync)
+      def subsurface(surface, kind : Buffer::Kind, opaque, sync = true, size = nil, position = {0, 0})
+        Subsurface(self).new(surface, kind, opaque, sync, position)
       end
     end
 

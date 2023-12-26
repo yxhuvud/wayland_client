@@ -138,6 +138,7 @@ module WaylandClient
     fun wl_callback_destroy = wl_callback_destroy_shim(Pointer(WlCallback))
 
     fun wl_subcompositor_get_subsurface = wl_subcompositor_get_subsurface_shim(Pointer(WlSubcompositor), Pointer(WlSurface), Pointer(WlSurface)) : Pointer(WlSubsurface)
+    fun wl_subsurface_set_position = wl_subsurface_set_position_shim(Pointer(WlSubsurface), LibC::Int, LibC::Int) : Void
     fun wl_subsurface_set_sync = wl_subsurface_set_sync_shim(Pointer(WlSubsurface)) : Void
     fun wl_subsurface_set_desync = wl_subsurface_set_desync_shim(Pointer(WlSubsurface)) : Void
     fun wl_subsurface_destroy = wl_subsurface_destroy_shim(Pointer(WlSubsurface)) : Void

@@ -130,6 +130,11 @@ wl_subsurface_set_desync_shim(struct wl_subsurface *sub) {
 }
 
 void
+wl_subsurface_set_position_shim(struct wl_subsurface *sub, int x, int y) {
+  wl_subsurface_set_position(sub, x, y);
+}
+
+void
 wl_subsurface_destroy_shim(struct wl_subsurface *sub) {
   wl_subsurface_destroy(sub);
 }

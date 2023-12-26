@@ -146,7 +146,7 @@ toplevel surface that is connected to the frame, will be defined by
 the frame when the user resizes the window.
 
 Relevant methods:
-- `create_subsurface(kind : Buffer::Kind, format, opaque, sync = true)`
+- `create_subsurface(kind : Buffer::Kind, format, opaque, sync = true, position = {0, 0})`
   Creates a subdivision of the surface that can have its own rules. It
   holds another surface which can then either cover the whole parent
   or just a part of it. `kind`, `format` and `opaque` is just passed
@@ -154,7 +154,8 @@ Relevant methods:
   the subsurface will only be updated when the parent is updated, or
   if it should update independently of the parent. Often sync is just
   fine for static content, but if you want dynamic updates then you
-  probably want to not have it be synced.
+  probably want to not have it be synced. `position` specifies where
+  on the parent surface the surface should be.
 
 - `request_frame(frame_callback : Proc(UInt32, Nil))`
 

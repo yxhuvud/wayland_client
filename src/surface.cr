@@ -73,8 +73,8 @@ module WaylandClient
       damage_buffer(0, 0, Int32::MAX, Int32::MAX)
     end
 
-    def create_subsurface(kind : Buffer::Kind, format, opaque, sync = true)
-      format.subsurface(self, kind, opaque, sync)
+    def create_subsurface(kind : Buffer::Kind, format, opaque, sync = true,  position = {0,0})
+      format.subsurface(self, kind, opaque, sync: sync, position: position)
     end
 
     def commit
