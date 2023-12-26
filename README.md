@@ -37,6 +37,13 @@ Wayland needs to be used on the system.
 
 2. Run `shards install`
 
+Warning: So far it has only been tested with Gnome. Please report (or
+send fixes) for Plasma or other wayland compositors. Supporting
+decorations using the extension instead of through libdecor is a major
+task, but would be accepted as long as the libdecor stuff also works.
+The latter is necessary on Gnome because they don't want to support
+the extension.
+
 ## Usage
 See the examples folder for more details and how things tie together.
 
