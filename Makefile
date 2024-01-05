@@ -8,8 +8,8 @@ spec  : build
 	crystal spec --error-trace
 
 build : init
-	cc -march=native -g -c -o build/shim.o -Wall -O3 src/c/shim.c -lwayland-client
-	cc -march=native -g -c -o build/xdg-shell.o -Wall -O3 src/c/xdg-shell-protocol.c -lwayland-client -lrt
+	cc -march=native -g -c -Wall -O3 -o build/shim.o       src/c/shim.c               -lwayland-client
+	cc -march=native -g -c -Wall -O3 -o build/xdg-shell.o  src/c/xdg-shell-protocol.c -lwayland-client -lrt
 
 clean :
 	rm build/*
