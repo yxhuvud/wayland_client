@@ -18,12 +18,17 @@ module WaylandClient
         @buffer = Pointer(T).null
         @wl_buffer = Pointer(LibWaylandClient::WlBuffer).null
         @x_size = @y_size = @size = 0
-        @buffer_listener = LibWaylandClient::WlBufferListener.new(
-          release: Proc(Void*, Pointer(LibWaylandClient::WlBuffer), Void).new do |data, buffer|
-            buffer = data.as(Memory(T))
-            buffer.pool.checkin(buffer)
-          end
-        )
+        @buffer_listener = LibWaylandClient::WlBufferListener.new(release: release)
+      end
+
+      private def release
+        Proc(Void*, Pointer(LibWaylandClient::WlBuffer), Void).new do |data, _wl_buffer|
+          data.as(Memory(T)).checkin
+        end
+      end
+
+      protected def checkin
+        pool.checkin(self)
       end
 
       def resize(x, y)
