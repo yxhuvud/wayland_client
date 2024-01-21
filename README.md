@@ -286,7 +286,7 @@ It should be possible to use existing Crystal libraries for OpenGL for
 interacting with the raw buffers. That will involve an extra copy
 though, so it will not be optimally efficient.
 
-What is wanted there is
+Wishlist
  - Support for DMA buffers. There is some preparation work done to support
    having multiple buffer types but the actual DMA buffer type is not done yet.
  - Wayland EGL bindings needs to be implemented.
