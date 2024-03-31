@@ -9,6 +9,7 @@ module WaylandClient
 
     getter seat : Seat?
     getter xdg : Xdg?
+    getter names
 
     def initialize(display)
       @names = Hash(LibC::UInt, String).new
