@@ -11,7 +11,13 @@ module WaylandClient
 
     def initialize
       @display = LibWaylandClient.wl_display_connect(nil)
+      @connected = true
+
       raise "Unable to connect" if @display.null?
+    end
+
+    def connected?
+       @connected
     end
 
     def to_unsafe
@@ -20,6 +26,7 @@ module WaylandClient
 
     def disconnect
       LibWaylandClient.wl_display_disconnect(@display)
+      @connected = false
     end
 
     def roundtrip

@@ -22,6 +22,10 @@ module WaylandClient
       region(add_all: true).opaque! if opaque
     end
 
+    def format
+      Format
+    end
+
     def region(add_all = false)
       Region.new(registry.compositor, self, add_all: add_all)
     end
