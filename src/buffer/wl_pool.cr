@@ -74,7 +74,7 @@ module WaylandClient
       end
 
       private def unmap_pool
-        LibC.munmap(@buffer, @size)
+        LibC.munmap(@buffer, @capacity)
         WaylandClient::LibWaylandClient.wl_shm_pool_destroy(@shm_pool)
       end
 
