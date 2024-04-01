@@ -43,7 +43,7 @@ module WaylandClient
       end
 
       private def within_bounds?(requested_size)
-        @capacity * 0.7 <= requested_size <= @capacity
+        (@capacity >> 1) <= requested_size <= @capacity
       end
 
       def close
