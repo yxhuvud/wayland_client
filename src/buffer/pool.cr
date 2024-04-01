@@ -52,6 +52,10 @@ module WaylandClient
       def checkin(buffer)
         @checked_out &-= 1
         if @checked_out >= POOL_SIZE
+          # Practical problem: On window resize mutter won't release
+          # buffers back fast enough, meaning despite doing our best
+          # to avoid allocating new it doesn't help as mutter
+          # prioritizes other things. Sigh.
           buffer.close
           raise "FAIL" if callback
         else
