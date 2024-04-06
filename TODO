@@ -19,7 +19,7 @@
 ** Moar formats
 
 * mouse cursors
-** system
+** system # https://wayland.app/protocols/cursor-shape-v1 coming eventually. Waiting for gnome support
 ** DONE custom
 
 * window states
