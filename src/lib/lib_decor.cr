@@ -36,7 +36,7 @@ module WaylandClient
     enum Capabilities
       Move
       Resize
-      Minimimze
+      Minimize
       Fullscreen
       Close
     end
@@ -78,6 +78,8 @@ module WaylandClient
     fun frame_set_title = libdecor_frame_set_title(Pointer(Frame), Pointer(Char)) : Void
     fun frame_get_title = libdecor_frame_get_title(Pointer(Frame)) : Pointer(Char)
     fun frame_set_app_id = libdecor_frame_set_app_id(Pointer(Frame), Pointer(Char)) : Void
+
+    fun frame_has_capability = libdecor_frame_has_capability(Pointer(Frame), Capabilities) : Void
     fun frame_set_capabilities = libdecor_frame_set_capabilities(Pointer(Frame), Capabilities) : Void
     fun frame_unset_capabilities = libdecor_frame_unset_capabilities(Pointer(Frame), Capabilities) : Void
 
@@ -94,5 +96,8 @@ module WaylandClient
 
     fun set_fullscreen = libdecor_frame_set_fullscreen(Pointer(Frame), Pointer(LibWaylandClient::WlOutput)) : Void
     fun unset_fullscreen = libdecor_frame_unset_fullscreen(Pointer(Frame)) : Void
+
+    fun set_maximized = libdecor_frame_set_maximized(Pointer(Frame), Pointer(LibWaylandClient::WlOutput)) : Void
+    fun unset_maximized = libdecor_frame_unset_maximized(Pointer(Frame)) : Void
   end
 end

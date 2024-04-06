@@ -101,8 +101,6 @@ module WaylandClient
         LibDecor.frame_set_app_id(self, app_id.to_unsafe.as(Pointer(Char)))
       end
 
-      # TODO: capabilities
-
       def unref
         decor.frame_removed(self)
         LibDecor.frame_unref(self)
@@ -133,6 +131,66 @@ module WaylandClient
 
       def unfullscreen
         LibDecor.unset_fullscreen(self)
+      end
+
+      def maximize
+        LibDecor.set_maximized(self, Pointer(LibWaylandClient::WlOutput).null)
+      end
+
+      def unmaximize
+        LibDecor.unset_maximized(self)
+      end
+
+      def movable?
+        capability?(:move)
+      end
+
+      def movable=(b)
+        set_capability_if(b, :move)
+      end
+
+      def minimizable?
+        capability?(:minimize)
+      end
+
+      def minimizable=(b)
+        set_capability_if(b, :minimize)
+      end
+
+      def closable?
+        capability?(:close)
+      end
+
+      def closable=(b)
+        set_capability_if(b, :close)
+      end
+
+      def fullscreenable?
+        capability?(:fullscreen)
+      end
+
+      def fullscreenable=(b)
+        set_capability_if(b, :fullscreen)
+      end
+
+      def resizable?
+        capability?(:resize)
+      end
+
+      def resizable=(b)
+        set_capability_if(b, :resize)
+      end
+
+      private def capability?(capability : LibDecor::Capabilities)
+        LibDecor.frame_has_capability(self, capability) > 0
+      end
+
+      private def set_capability_if(b, capability : LibDecor::Capabilities)
+        if b
+          LibDecor.frame_set_capabilities(self, capability)
+        else
+          LibDecor.frame_unset_capabilities(self, capability)
+        end
       end
     end
   end
