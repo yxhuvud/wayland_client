@@ -127,12 +127,57 @@ Creates a new surface. Needed to create a new frame.
 - `accepts_input`: Should the surface accept input, or should the
   input pass through down to the layer beneath it?
 
-`create_frame(surface, title = nil, app_id = nil, &block)`. Takes a
-  surface, a title (that is shown in the title bar), and an app_id
-  (which is shown in the task bar), and a block. The block needs to be
-  there and will need to check out a buffer for the surface, and then
-  commit the surface. If no surface is painted and committed then no
-  window will appear, so don't forget this part.
+`create_frame(surface, title = nil, app_id = nil, &block)`. Creates a
+  Frame. Takes a surface, a title (that is shown in the title bar),
+  and an app_id (which is shown in the task bar), and a block. The
+  block needs to be there and will need to check out a buffer for the
+  surface, and then commit the surface. If no surface is painted and
+  committed then no window will appear, so don't forget this part.
+
+### Frame
+
+Frames define the windows that are painted on the screen. Contain
+functions related to handling said window. Created from the Client.
+
+On a technical level these are backed by a library called libdecor,
+because I don't want to reinvent basic stuff like window decorations.
+
+Relevant methods:
+`#visibility=`     Turns this frame visible or invisible
+
+`#visible?`        Is this frame visible?
+
+`#title=`          Set frame title
+
+`#title`           Get frame title
+
+`#app_id=`         Set frame app_id, ie how it is shown in the task bar.
+
+`#close`           Closes the frame
+
+`#fullscreen`      Set window to fullscreen. Note: This is quite buggy and full of sharp corners. Needs polish.
+
+`#unfullscreen`    Reset fullscreen status. Note: Doesn't work very well. Needs polish.
+
+`#movable?`        Can the frame be moved?
+
+`#movable=`        Toggle frame movability
+
+`#minimizable?`    Can the frame be minimized?
+
+`#minimizable=`    Toggle frame minimizability
+
+`#closable?`       Can the frame be closed (using the X)?
+
+`#closable=`       Toggle if X should be shown or not
+
+`#fullscreenable?` Can the frame be fullscreened from the frame
+
+`#fullscreenable=` Toggle if the frame can be fullscreened or not
+
+`#resizable?`      Can the frame be resized?
+
+`#resizable=`      Toggle resizability
 
 ### Surface
 
