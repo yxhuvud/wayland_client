@@ -8,7 +8,7 @@ CURSOR_POINTER        = WaylandClient::Format::ARGB8888.new(0xAA, 0xAA, 0xAA, 0x
 CURSOR_POINTER_BORDER = WaylandClient::Format::ARGB8888.new(0xFF, 0xFF, 0xFF, 0xFF)
 
 frame_counter = WaylandClient::Counter.new("Frames: %s")
-sleep 0.01 # To make the counters print in consistent order
+sleep 0.01.seconds # To make the counters print in consistent order
 setup_counter = WaylandClient::Counter.new("setup: %s")
 
 spawn do
