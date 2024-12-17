@@ -55,6 +55,9 @@ class KeyboardHandler
   include WaylandClient::KeyboardHandler
 
   def key(time, key, state, serial)
+    if key == 'c' && modifiers.depressed.ctrl?
+      exit
+    end
     p "keyboard key: %s, modifiers: %s" % {key, modifiers.depressed.to_s}
   end
 end
