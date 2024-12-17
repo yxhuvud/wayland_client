@@ -36,15 +36,7 @@ module WaylandClient
       skip_next = callback_count > 1
 
       if handler = @frame_handler
-        if surface.buffer_pool.available?
-          handler.call(time)
-        else
-          # FIXME: add pool callback unless there is already one (to
-          # avoid colliding with config events)
-
-          # sleep 0.001
-          # handler.call(time)
-        end
+        !skip_next && handler.call(time)
 
         request(handler, true) if @chained_frames && !skip_next
       else

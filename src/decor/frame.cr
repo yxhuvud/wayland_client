@@ -22,7 +22,7 @@ module WaylandClient
         @frame = LibDecor.decorate(decor, surface, pointerof(@interface), self.as(Void*))
       end
 
-      def configure(config)
+      protected def configure(config)
         return perform_configure(config) if surface.buffer_pool.available?
 
         # If there is no available buffer, copy config and perform
@@ -32,11 +32,6 @@ module WaylandClient
         config_copy = Pointer(LibDecor::Configuration).malloc
         config_copy.copy_from(config, 1)
         surface.buffer_pool.callback = Proc(Nil).new { perform_configure(config_copy) }
-        # Make resizing less of a lag-fest. Gnome-shell lack of back
-        # pressure :( On newer gnomes I've also had full och system
-        # crashes with the sleep commented out. They may happen
-        # regardless, but sheesh.
-        sleep 0.0015
       end
 
       private def perform_configure(config)
