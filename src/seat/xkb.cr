@@ -62,6 +62,10 @@ module WaylandClient
           value.in?(MODIFIERS)
         end
 
+        def ==(other : Char)
+          other == chr
+        end
+
         def inspect(io : IO) : Nil
           if value < 65535
             io << "Key('" << chr << "', modifier:" << modifier? << ", raw: " << value << " )"
