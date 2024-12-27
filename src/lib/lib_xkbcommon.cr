@@ -1,9 +1,9 @@
 module WaylandClient
   @[Link("xkbcommon")]
   lib LibXkbcommon
-    alias XkbContext = Void
-    alias XkbKeymap = Void
-    alias XkbState = Void
+    type XkbContext = Void
+    type XkbKeymap = Void
+    type XkbState = Void
     alias XkbKeycode = UInt32
     alias XkbKeysym = UInt32
 

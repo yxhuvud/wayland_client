@@ -51,9 +51,9 @@ module WaylandClient
       window_height : LibC::Int
     end
 
-    alias Frame = Void
-    alias Context = Void
-    alias State = Void
+    type Frame = Void
+    type Context = Void
+    type State = Void
 
     struct Interface
       error : Context*, Error, Char* -> Void

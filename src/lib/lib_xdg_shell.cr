@@ -3,8 +3,8 @@ require "./lib_wayland_client"
 module WaylandClient
   @[Link(ldflags: "#{__DIR__}/../../build/xdg-shell.o")]
   lib LibXdgShell
-    alias XdgSurface = Void
-    alias XdgToplevel = Void
+    type XdgSurface = Void
+    type XdgToplevel = Void
 
     struct BaseListener
       ping : Void*, LibWaylandClient::XdgWmBase*, UInt32 -> Void

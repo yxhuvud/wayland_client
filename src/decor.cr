@@ -5,7 +5,7 @@ require "./decor/frame"
 module WaylandClient
   class Decor
     getter context, display
-    @error_callback : Pointer(Void), WaylandClient::LibDecor::Error, Pointer(Char) -> Void
+    @error_callback : Pointer(LibDecor::Context), WaylandClient::LibDecor::Error, Pointer(Char) -> Void
 
     def initialize(@display : Display)
       @error_callback = Proc(LibDecor::Context*, LibDecor::Error, Char*, Void).new do |_context, error, char|

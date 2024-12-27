@@ -1,25 +1,25 @@
 module WaylandClient
   @[Link("wayland-client", ldflags: "#{__DIR__}/../../build/shim.o")]
   lib LibWaylandClient
-    alias WlBuffer = Void
-    alias WlCallback = Void
-    alias WlCompositor = Void
-    alias WlConnection = Void
-    alias WlDisplay = Void
-    alias WlKeyboard = Void
-    alias WlMessage = Void
-    alias WlPointer = Void
-    alias WlRegion = Void
-    alias WlRegistry = Void
-    alias WlSeat = Void
-    alias WlShm = Void
-    alias WlShmPool = Void
-    alias WlSubcompositor = Void
-    alias WlSubsurface = Void
-    alias WlSurface = Void
-    alias WlTouch = Void
-    alias XdgWmBase = Void
-    alias WlOutput = Void
+    type WlBuffer = Void
+    type WlCallback = Void
+    type WlCompositor = Void
+    type WlConnection = Void
+    type WlDisplay = Void
+    type WlKeyboard = Void
+    type WlMessage = Void
+    type WlPointer = Void
+    type WlRegion = Void
+    type WlRegistry = Void
+    type WlSeat = Void
+    type WlShm = Void
+    type WlShmPool = Void
+    type WlSubcompositor = Void
+    type WlSubsurface = Void
+    type WlSurface = Void
+    type WlTouch = Void
+    type XdgWmBase = Void
+    type WlOutput = Void
 
     struct WlArray
       size : LibC::SizeT
@@ -50,19 +50,6 @@ module WaylandClient
     alias WlPointerListenerAxisStop = Pointer(Void), Pointer(WlPointer), UInt32, UInt32 -> Void
     alias WlPointerListenerAxisDiscrete = Pointer(Void), Pointer(WlPointer), UInt32, Int32 -> Void
     alias WlPointerListenerAxisValue120 = Pointer(Void), Pointer(WlPointer), UInt32, Int32 -> Void
-
-    struct WlPointerListener
-      enter : WlPointerListenerEnter
-      leave : WlPointerListenerLeave
-      motion : WlPointerListenerMotion
-      button : WlPointerListenerButton
-      axis : WlPointerListenerAxis
-      frame : WlPointerListenerFrame
-      axis_source : WlPointerListenerAxisSource
-      axis_stop : WlPointerListenerAxisStop
-      axis_discrete : WlPointerListenerAxisDiscrete
-      axis_value120 : WlPointerListenerAxisValue120
-    end
 
     alias WlKeyboardListenerKeymap = Pointer(Void), Pointer(WlKeyboard), UInt32, Int32, UInt32 -> Void
     alias WlKeyboardListenerEnter = Pointer(Void), Pointer(WlKeyboard), UInt32, Pointer(WlSurface), Pointer(WlArray) -> Void
@@ -99,9 +86,9 @@ module WaylandClient
     $wl_shm_interface : WlInterface
     $wl_subcompositor_interface : WlInterface
 
-    alias WlDisplayUpdateFunc = UInt32, Pointer(Void) -> LibC::Int
-    alias WlDisplayGlobalFunc = Pointer(WlDisplay), UInt32, Pointer(LibC::Char), UInt32, Pointer(Void) -> LibC::Int
-    alias WlConnectionUpdateFunc = Pointer(WlConnection), UInt32, Pointer(Void) -> LibC::Int
+    type WlDisplayUpdateFunc = UInt32, Pointer(Void) -> LibC::Int
+    type WlDisplayGlobalFunc = Pointer(WlDisplay), UInt32, Pointer(LibC::Char), UInt32, Pointer(Void) -> LibC::Int
+    type WlConnectionUpdateFunc = Pointer(WlConnection), UInt32, Pointer(Void) -> LibC::Int
 
     fun wl_display_connect(name : Pointer(Char)) : Pointer(WlDisplay)
     fun wl_display_disconnect(Pointer(WlDisplay))
@@ -115,7 +102,7 @@ module WaylandClient
     fun wl_buffer_destroy(Pointer(WlBuffer)) : Void
     fun wl_callback_destroy(Pointer(WlCallback)) : Void
 
-    fun wl_region_destroy = wl_surface_destroy_shim(Pointer(WlRegion)) : Void
+    fun wl_region_destroy = wl_region_destroy_shim(Pointer(WlRegion)) : Void
     fun wl_surface_destroy = wl_surface_destroy_shim(Pointer(WlSurface)) : Void
 
     fun wl_display_get_registry = wl_display_get_registry_shim(WlDisplay*) : Pointer(WlRegistry)
@@ -264,6 +251,19 @@ module WaylandClient
       Cancel      = 4
       Shape       = 5
       Orientation = 6
+    end
+
+    struct WlPointerListener
+      enter : WlPointerListenerEnter
+      leave : WlPointerListenerLeave
+      motion : WlPointerListenerMotion
+      button : WlPointerListenerButton
+      axis : WlPointerListenerAxis
+      frame : WlPointerListenerFrame
+      axis_source : WlPointerListenerAxisSource
+      axis_stop : WlPointerListenerAxisStop
+      axis_discrete : WlPointerListenerAxisDiscrete
+      axis_value120 : WlPointerListenerAxisValue120
     end
   end
 end
