@@ -46,9 +46,10 @@ module WaylandClient
     def wait_loop
       fd = LibDecor.get_fd(@context)
       file = IO::FileDescriptor.new(fd)
+      event_loop = Crystal::EventLoop.current
       loop do
         display.flush
-        file.wait_readable
+        event_loop.wait_readable(file)
         dispatch
 
         break unless has_frame?

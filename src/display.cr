@@ -49,9 +49,10 @@ module WaylandClient
         # from loop is needed there too.
         fd = LibWaylandClient.wl_display_get_fd(@display)
         file = IO::FileDescriptor.new(fd)
+        event_loop = Crystal::EventLoop.current
         loop do
           flush
-          file.wait_readable
+          event_loop.wait_readable(file)
           dispatch
         end
       end
