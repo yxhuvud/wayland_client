@@ -1,4 +1,4 @@
-#require "./touch_handler"
+# require "./touch_handler"
 
 module WaylandClient
   class Seat

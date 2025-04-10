@@ -38,6 +38,7 @@ module WaylandClient
           new_size,
         }
       end
+
       private def format
         T.shm_format
       end

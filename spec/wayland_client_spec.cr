@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-def client
+def client(&)
   c = nil
   WaylandClient.connect do |client|
     c = client

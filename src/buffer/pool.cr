@@ -28,7 +28,7 @@ module WaylandClient
         @size = {x, y}
       end
 
-      def resize!(x, y, surface)
+      def resize!(x, y, surface, &)
         resize(x, y)
         surface.repaint!(self, flush: false) { |buffer| yield buffer }
       end

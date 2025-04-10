@@ -17,7 +17,7 @@ module WaylandClient
     end
 
     def connected?
-       @connected
+      @connected
     end
 
     def to_unsafe

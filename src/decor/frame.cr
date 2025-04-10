@@ -109,7 +109,7 @@ module WaylandClient
         LibDecor.frame_map(self)
       end
 
-      def with_state(x, y)
+      def with_state(x, y, &)
         state = LibDecor.state_new(x, y)
         yield state
         LibDecor.state_free(state)

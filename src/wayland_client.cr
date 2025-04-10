@@ -8,7 +8,7 @@ require "./buffer/memory"
 module WaylandClient
   VERSION = "0.1.0"
 
-  def self.connect
+  def self.connect(&)
     Client.new.client { |client| yield client }
   end
 
@@ -23,7 +23,7 @@ module WaylandClient
       @display.roundtrip
     end
 
-    def client
+    def client(&)
       yield self
     ensure
       display.disconnect

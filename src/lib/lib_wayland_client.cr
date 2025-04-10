@@ -112,7 +112,7 @@ module WaylandClient
     fun wl_shm_create_pool = wl_shm_create_pool_shim(WlShm*, LibC::Int, LibC::Int) : WlShmPool*
     fun wl_shm_pool_destroy = wl_shm_pool_destroy_shim(Pointer(WlShmPool)) : Void
     fun wl_shm_pool_create_buffer = wl_shm_pool_create_buffer_shim(
-      WlShmPool*, LibC::Int, LibC::Int, LibC::Int, LibC::Int, WlShmFormat
+      WlShmPool*, LibC::Int, LibC::Int, LibC::Int, LibC::Int, WlShmFormat,
     ) : WlBuffer*
     fun wl_buffer_destroy = wl_buffer_destroy_shim(Pointer(WlBuffer))
     fun wl_buffer_add_listener = wl_buffer_add_listener_shim(WlBuffer*, WlBufferListener*, Void*)

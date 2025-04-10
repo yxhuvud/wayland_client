@@ -17,7 +17,7 @@ module WaylandClient
       @counter &+= 1
     end
 
-    def measure(frequency = 1)
+    def measure(frequency = 1, &)
       yield @counter
       @counter = 0
       @time += frequency.seconds
