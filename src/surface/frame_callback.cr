@@ -32,7 +32,7 @@ module WaylandClient
       # For some reason I don't understand there will always be 2
       # frame callbacks going. If there is more it means window was
       # resized and then we should skip requesting more as that will
-      # compound the amount      # of callbacks.
+      # compound the amount of callbacks.
       skip_next = callback_count > 1
 
       if handler = @frame_handler
