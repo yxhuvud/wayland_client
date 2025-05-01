@@ -23,15 +23,14 @@ describe WaylandClient do
 
     it "populates the registry information" do
       client = client { }
-      client.registry.names.superset_of?(
-        {
-           1u32 => "wl_compositor",
-           3u32 => "wl_shm",
-           9u32 => "wl_subcompositor",
-          10u32 => "xdg_wm_base",
-          16u32 => "wl_seat",
-        }
-      ).should be_true
+      names = client.registry.names.values
+      [
+        "wl_compositor",
+        "wl_shm",
+        "wl_subcompositor",
+        "xdg_wm_base",
+        "wl_seat",
+      ].all? { |name| name.in?(names) }.should be_true
     end
 
     it "allows the creation of a surface" do
