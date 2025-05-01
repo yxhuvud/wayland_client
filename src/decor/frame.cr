@@ -22,36 +22,29 @@ module WaylandClient
         @frame = LibDecor.decorate(decor, surface, pointerof(@interface), self.as(Void*))
       end
 
-      protected def configure(config)
-        return perform_configure(config) if surface.buffer_pool.available?
-
-        # If there is no available buffer, copy config and perform
-        # the configuration later once there is a buffer available.
-        # Do note that we need to copy the config as libdecor will
-        # free it immediately after the call to configure.
-        config_copy = Pointer(LibDecor::Configuration).malloc
-        config_copy.copy_from(config, 1)
-        surface.buffer_pool.callback = Proc(Nil).new { perform_configure(config_copy) }
-      end
-
-      private def perform_configure(config)
+      private def dimensions(config)
         dimensions = get_content_size(config)
-        initial = false
         x, y =
           if dimensions
             dimensions
           else
-            initial = true
             @initial_size
           end
+        y = 1 if y < 1
+        {x, y}
+      end
+
+      protected def configure(config)
+        x, y = dimensions(config)
         window_state = get_window_state(config)
+
         with_state(x, y) do |state|
-          # Initial call to configure sets the initial window size,
-          # doing the callback at this point will result in misalignment in output.
-          commit(config, state) if initial
           surface.resize(x, y)
-          @configure_callback.call(x, y, window_state)
-          commit(config, state)
+          # Check not strictly necessary but make things a lot smoother
+          if surface.buffer_pool.available?
+            @configure_callback.call(x, y, window_state)
+            commit(config, state)
+          end
         end
       end
 

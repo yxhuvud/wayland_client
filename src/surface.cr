@@ -47,9 +47,14 @@ module WaylandClient
     end
 
     def repaint!(&)
-      yield attached_buffer
-      damage_all
-      commit
+      if buffer_pool.available?
+        yield attached_buffer
+        damage_all
+        commit
+        true
+      else
+        false
+      end
     end
 
     # Return a buffer attached to the surface. Be sure to damage and

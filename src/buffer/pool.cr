@@ -13,13 +13,11 @@ module WaylandClient
       POOL_SIZE = 2
 
       getter size : Tuple(Int32, Int32)
-      property callback : Proc(Nil)?
 
       def initialize(x = 0, y = 0)
         @free_buffers = Deque(T).new
         @size = {x, y}
         @checked_out = 0
-        @callback = nil
       end
 
       def resize(x, y)
@@ -30,7 +28,7 @@ module WaylandClient
 
       def resize!(x, y, surface, &)
         resize(x, y)
-        surface.repaint!(self, flush: false) { |buffer| yield buffer }
+        surface.repaint(self, flush: false) { |buffer| yield buffer }
       end
 
       def checkout(registry : WaylandClient::Registry)
@@ -57,13 +55,8 @@ module WaylandClient
           # to avoid allocating new it doesn't help as mutter
           # prioritizes other things. Sigh.
           buffer.close
-          raise "FAIL" if callback
         else
           @free_buffers << buffer
-          if cb = @callback
-            @callback = nil
-            cb.call
-          end
         end
       end
 

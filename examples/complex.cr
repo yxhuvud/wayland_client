@@ -87,11 +87,12 @@ WaylandClient.connect do |client|
     opaque: true,
     position: {50, 50}
   )
+  subsurface2.surface.resize(x: 50, y: 100)
 
-  frame_callback = Proc(UInt32, Nil).new do |time|
+  subsurface_frame_callback = Proc(UInt32, Nil).new do |time|
     frame_counter.register time
 
-    subsurface.surface.repaint!(&.map! { SUBSURFACE_RED })
+    subsurface.surface.repaint(&.map! { SUBSURFACE_RED })
   end
 
   # The block is called on initialization and on resize, and
@@ -99,17 +100,15 @@ WaylandClient.connect do |client|
   frame = client.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
     setup_counter.register
 
-    surface.repaint! &.map! { SUBSURFACE_RED }
-    surface.commit
+    surface.repaint &.map! { SUBSURFACE_RED }
 
     # Make sure to paint the subsurface here as it will look wrong on
     # resize otherwise.
     subsurface.surface.resize(**surface.size)
-    subsurface.surface.repaint! &.map! { SUBSURFACE_RED }
+    subsurface.surface.repaint &.map! { SUBSURFACE_RED }
 
     # paint second subsurface, once
-    subsurface2.surface.resize(x: 50, y: 100)
-    subsurface2.surface.repaint! &.map! { SUBSURFACE2_BLACK }
+    subsurface2.surface.repaint &.map! { SUBSURFACE2_BLACK }
 
     # Automatically generate new frames at monitor FPS. Cannot be set
     # up before configuration (ie this block) has been run, but also
@@ -117,7 +116,7 @@ WaylandClient.connect do |client|
     # believe is a compositor bug. If it is only set up once it will
     # stop running if there is a configuration event, but if a new
     # frame is requested it will run both!
-    subsurface.surface.request_frame(frame_callback)
+    subsurface.surface.request_frame(subsurface_frame_callback)
   end
 
   cursor = WaylandClient::Format::ARGB8888.cursor(
