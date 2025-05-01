@@ -16,7 +16,7 @@ module WaylandClient
     end
 
     private def paint
-      surface.repaint! { |buf| @callback.call(buf) }
+      surface.repaint { |buf| @callback.call(buf) }
     end
 
     private def pointer

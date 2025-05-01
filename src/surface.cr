@@ -46,7 +46,7 @@ module WaylandClient
       LibWaylandClient.wl_surface_damage_buffer(self, x, y, width, height)
     end
 
-    def repaint!(&)
+    def repaint(&)
       if buffer_pool.available?
         yield attached_buffer
         damage_all

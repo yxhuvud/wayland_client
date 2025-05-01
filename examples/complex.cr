@@ -36,7 +36,7 @@ class PointerHandler
 
   def frame
     if pointer_event.button_state
-      pp pointer_event
+      #      pp pointer_event
       # Commented due to what I think is a libdecor bug. But I could
       # be using it wrong too..
 
