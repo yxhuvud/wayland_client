@@ -22,6 +22,7 @@ This means that the following libraries need to be present
 libdecor
 libwayland-client
 libxkbcommon
+libdecor
 ```
 
 Also for obvious reasons, please remember that for things to work
