@@ -3,7 +3,7 @@ module WaylandClient
     class Frame
       getter :decor, :surface
 
-      def initialize(@decor : Decor, @surface : GenericSurface, @configure_callback : Proc(LibC::Int, LibC::Int, LibDecor::WindowState, Void), @initial_size = {400, 300})
+      def initialize(@decor : Decor, @surface : GenericSurface, @configure_callback : Proc(LibC::Int, LibC::Int, LibDecor::WindowState, Void), @initial_size : Tuple(Int32, Int32))
         @interface = LibDecor::FrameInterface.new(
           configure: Proc(Pointer(LibDecor::Frame), Pointer(LibDecor::Configuration), Pointer(Void), Void).new { |frame, config, data|
             data.as(Frame).configure(config)

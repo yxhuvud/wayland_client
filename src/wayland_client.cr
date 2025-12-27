@@ -52,8 +52,9 @@ module WaylandClient
     def create_frame(surface,
                      title = nil,
                      app_id = nil,
+                     initial_size = {400, 300},
                      &configure_callback : LibC::Int, LibC::Int, LibDecor::WindowState -> Void)
-      display.decorator.frame(surface, title, app_id, configure_callback)
+      display.decorator.frame(surface, title, app_id, initial_size, configure_callback)
     end
 
     def create_surface(kind : Buffer::Kind, format, opaque, accepts_input = true)
