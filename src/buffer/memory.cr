@@ -67,6 +67,14 @@ module WaylandClient
         end
       end
 
+      def fill(value)
+        map! { value }
+      end
+
+      def fill(xrange, yrange, value)
+        map!(xrange, yrange) { value }
+      end
+
       def to_unsafe
         wl_pool.wl_buffer
       end
