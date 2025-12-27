@@ -48,9 +48,12 @@ module WaylandClient
 
     def repaint(&)
       if buffer_pool.available?
-        yield attached_buffer
-        damage_all
-        commit
+        begin
+          yield attached_buffer
+        ensure
+          damage_all
+          commit
+        end
         true
       else
         false
