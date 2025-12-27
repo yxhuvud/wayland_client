@@ -47,8 +47,8 @@ module WaylandClient
 
       def map!(&)
         buf = buffer
-        0.to(@y_size) do |y|
-          0.to(@x_size) do |x|
+        0.to(y_size) do |y|
+          0.to(x_size) do |x|
             buf.value = yield(x, y)
             buf += 1
           end
