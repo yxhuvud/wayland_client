@@ -13,3 +13,7 @@ scripts:
 
 libraries:
   wayland-client: "*"
+
+development_dependencies:
+  cairo:
+    github: TamasSzekeres/cairo-cr
