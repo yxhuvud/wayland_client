@@ -1,4 +1,5 @@
 require "../src/wayland_client"
+require "./cairo"
 
 SURFACE_WHITE         = WaylandClient::Format::XRGB8888.new(0xFF, 0xFF, 0xFF)
 SUBSURFACE_RED        = WaylandClient::Format::XRGB8888.new(0xFF, 0, 0)
@@ -87,7 +88,7 @@ WaylandClient.connect do |client|
     opaque: true,
     position: {50, 50}
   )
-  subsurface2.surface.resize(x: 50, y: 100)
+  subsurface2.surface.resize(x: 150, y: 100)
 
   subsurface_frame_callback = Proc(UInt32, Nil).new do |time|
     frame_counter.register time
@@ -108,7 +109,10 @@ WaylandClient.connect do |client|
     subsurface.surface.repaint &.map! { SUBSURFACE_RED }
 
     # paint second subsurface, once
-    subsurface2.surface.repaint &.map! { SUBSURFACE2_BLACK }
+    subsurface2.surface.repaint do |buf|
+      buf.map! { SUBSURFACE2_BLACK }
+      Cairo.write_to_buf(buf.to_slice, buf.x_size, buf.y_size, "hello world")
+    end
 
     # Automatically generate new frames at monitor FPS. Cannot be set
     # up before configuration (ie this block) has been run, but also
