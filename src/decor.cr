@@ -25,8 +25,8 @@ module WaylandClient
       frame(surface, title, app_id, configure_callback)
     end
 
-    def frame(surface, title, app_id, configure_callback)
-      Decor::Frame.new(self, surface, configure_callback).tap do |frame|
+    def frame(surface, title, app_id, configure_callback, initial_size)
+      Decor::Frame.new(self, surface, initial_size, configure_callback).tap do |frame|
         frame.title = title if title
         frame.app_id = app_id if app_id
         # Trigger configure event:
