@@ -88,7 +88,7 @@ WaylandClient.connect do |client|
     opaque: true,
     position: {50, 50}
   )
-  subsurface2.surface.resize(x: 150, y: 100)
+  subsurface2.surface.resize(width: 150, height: 100)
 
   subsurface_frame_callback = Proc(UInt32, Nil).new do |time|
     frame_counter.register time
@@ -98,7 +98,7 @@ WaylandClient.connect do |client|
 
   # The block is called on initialization and on resize, and
   # potentially in more cases.
-  frame = client.create_frame(surface, title: "hello", app_id: "hello app") do |x, y, window_state|
+  frame = client.create_frame(surface, title: "hello", app_id: "hello app") do |width, height, window_state|
     setup_counter.register
 
     surface.repaint &.map! { SUBSURFACE_RED }
@@ -111,7 +111,7 @@ WaylandClient.connect do |client|
     # paint second subsurface, once
     subsurface2.surface.repaint do |buf|
       buf.map! { SUBSURFACE2_BLACK }
-      Cairo.write_to_buf(buf.to_slice, buf.x_size, buf.y_size, "hello world")
+      Cairo.write_to_buf(buf.to_slice, buf.width, buf.height, "hello world")
     end
 
     # Automatically generate new frames at monitor FPS. Cannot be set
@@ -126,13 +126,13 @@ WaylandClient.connect do |client|
   cursor = WaylandClient::Format::ARGB8888.cursor(
     client: client,
     kind: :memory,
-    size: {x: 32, y: 32},
-    hotspot: {x: 0, y: 0},
+    size: {width: 32, height: 32},
+    hotspot: {width: 0, height: 0},
   ) do |buf|
-    buf.map! do |x, y|
-      if x == 0 || y == 0
+    buf.map! do |width, height|
+      if width == 0 || height == 0
         CURSOR_POINTER_BORDER
-      elsif x < 15 || y < 15
+      elsif width < 15 || height < 15
         CURSOR_POINTER
       else
         CURSOR_ALPHA

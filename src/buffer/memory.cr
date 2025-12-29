@@ -11,12 +11,12 @@ module WaylandClient
     class Memory(T)
       include ::WaylandClient::Buffer::Buffer
 
-      getter registry, pool, x_size, y_size
+      getter registry, pool, width, height
       getter wl_pool : WlPool(T)
 
       def initialize(@registry : WaylandClient::Registry, @pool : Pool(Memory(T)))
         @wl_buffer = Pointer(LibWaylandClient::WlBuffer).null
-        @x_size = @y_size = 0
+        @width = @height = 0
 
         @wl_pool = WlPool(T).new(@registry.shm, release)
       end
@@ -31,10 +31,10 @@ module WaylandClient
         pool.checkin(self)
       end
 
-      def resize(x, y)
-        wl_pool.allocate_buffer(x, y, pixel_size, self)
-        @x_size = x - 1
-        @y_size = y - 1
+      def resize(width, height)
+        wl_pool.allocate_buffer(width, height, pixel_size, self)
+        @width = width
+        @height = height
       end
 
       private def buffer
@@ -42,28 +42,36 @@ module WaylandClient
       end
 
       def to_slice
-        Slice(T).new(buffer, (x_size + 1) * (y_size + 1))
+        Slice(T).new(buffer, width * height)
       end
 
       def map!(&)
         buf = buffer
-        0.to(y_size) do |y|
-          0.to(x_size) do |x|
-            buf.value = yield(x, y)
+        height.times do |h|
+          width.times do |w|
+            buf.value = yield(w, h)
             buf += 1
           end
         end
       end
 
-      def map!(xrange, yrange, &)
-        buf_with_xoffset = buffer + xrange.begin
-        yoffset = @y_size + 1
-        yrange.each do |y|
-          buf = buf_with_xoffset + yoffset &* (y)
-          xrange.each do |x|
-            buf.value = yield(x, y)
+      def map!(width_range, height_range, &)
+        width_end = width_range.excludes_end? ? width_range.end - 1 : width_range.end
+        height_end = height_range.excludes_end? ? height_range.end - 1 : height_range.end
+
+        raise "invalid range: width #{width_range} - max: #{width}" if width_end >= width
+        raise "invalid range: height #{height_range} - may: #{height}" if height_end >= height
+
+        # upper left corner of what to paint
+        buf = buffer + height_range.begin * width + width_range.begin
+        width_offset = width - (width_end - width_range.begin + 1)
+
+        height_range.each do |h|
+          width_range.each do |w|
+            buf.value = yield(w, h)
             buf += 1
           end
+          buf += width_offset
         end
       end
 
@@ -71,8 +79,8 @@ module WaylandClient
         map! { value }
       end
 
-      def fill(xrange, yrange, value)
-        map!(xrange, yrange) { value }
+      def fill(width_range, height_range, value)
+        map!(width_range, height_range) { value }
       end
 
       def to_unsafe

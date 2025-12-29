@@ -14,20 +14,20 @@ module WaylandClient
 
       getter size : Tuple(Int32, Int32)
 
-      def initialize(x = 0, y = 0)
+      def initialize(width = 0, height = 0)
         @free_buffers = Deque(T).new
-        @size = {x, y}
+        @size = {width, height}
         @checked_out = 0
       end
 
-      def resize(x, y)
-        raise "Invalid size" unless x > 0 && y > 0
+      def resize(width, height)
+        raise "Invalid size" unless width > 0 && height > 0
 
-        @size = {x, y}
+        @size = {width, height}
       end
 
-      def resize!(x, y, surface, &)
-        resize(x, y)
+      def resize!(width, height, surface, &)
+        resize(width, height)
         surface.repaint(self, flush: false) { |buffer| yield buffer }
       end
 
@@ -61,7 +61,7 @@ module WaylandClient
       end
 
       private def wrong_size?(buffer)
-        (buffer.x_size &+ 1 != @size[0]) || (buffer.y_size &+ 1 != @size[1])
+        (buffer.width != @size[0]) || (buffer.height != @size[1])
       end
     end
   end

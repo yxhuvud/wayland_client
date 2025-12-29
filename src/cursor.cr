@@ -6,13 +6,13 @@ module WaylandClient
     getter hotspot
     getter callback : Proc(WaylandClient::Buffer::Memory(Format), Void)
 
-    def initialize(@client : WaylandClient::Client, @surface, size, @hotspot : NamedTuple(x: Int32, y: Int32), @callback)
-      surface.resize(size[:x], size[:y])
+    def initialize(@client : WaylandClient::Client, @surface, size, @hotspot : NamedTuple(width: Int32, height: Int32), @callback)
+      surface.resize(size[:width], size[:height])
     end
 
     def use(serial)
       paint
-      LibWaylandClient.wl_pointer_set_cursor(pointer, serial, surface, hotspot[:x], hotspot[:y])
+      LibWaylandClient.wl_pointer_set_cursor(pointer, serial, surface, hotspot[:width], hotspot[:height])
     end
 
     private def paint

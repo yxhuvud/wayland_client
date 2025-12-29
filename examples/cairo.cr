@@ -1,11 +1,13 @@
 require "cairo"
 
 module Cairo
+  # Note: This is probably not a good way to use Cairo. If I properly understand what is going on then it may be
+  # wasteful to set up surface and contexts for each frame text is wanted.
   def self.write_to_buf(buf, width, height, text)
-    casted = buf.to_unsafe_bytes
+    bytes = buf.to_unsafe_bytes
     format = Cairo::Format::ARGB32
-    stride = format.stride_for_width(width + 1)
-    surface = Cairo::Surface.new(casted, format, width + 1, height + 1, stride)
+    stride = format.stride_for_width(width)
+    surface = Cairo::Surface.new(bytes, format, width, height, stride)
     context = Cairo::Context.new(surface)
     context.set_source_rgba(0, 1, 1, 1)
     context.font_size = 10.0

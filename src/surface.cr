@@ -38,12 +38,12 @@ module WaylandClient
       surface
     end
 
-    def attach_buffer(buffer, x = 0, y = 0)
-      LibWaylandClient.wl_surface_attach(surface, buffer, x, y)
+    def attach_buffer(buffer, width = 0, height = 0)
+      LibWaylandClient.wl_surface_attach(surface, buffer, width, height)
     end
 
-    def damage_buffer(x, y, width, height)
-      LibWaylandClient.wl_surface_damage_buffer(self, x, y, width, height)
+    def damage_buffer(w, h, width, height)
+      LibWaylandClient.wl_surface_damage_buffer(self, w, h, width, height)
     end
 
     def repaint(&)
@@ -72,13 +72,13 @@ module WaylandClient
       buffer
     end
 
-    def resize(x, y)
-      buffer_pool.resize(x, y)
+    def resize(width, height)
+      buffer_pool.resize(width, height)
     end
 
     def size
       sz = buffer_pool.size
-      {x: sz[0], y: sz[1]}
+      {width: sz[0], height: sz[1]}
     end
 
     def damage_all

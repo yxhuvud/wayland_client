@@ -18,22 +18,22 @@ module WaylandClient
         @shm_pool = Pointer(LibWaylandClient::WlShmPool).null
       end
 
-      def allocate_buffer(x, y, pixel_size, memory)
+      def allocate_buffer(width, height, pixel_size, memory)
         destroy_buffer if @size > 0
 
-        @wl_buffer, @size = create_buffer(x, y, pixel_size)
+        @wl_buffer, @size = create_buffer(width, height, pixel_size)
 
         WaylandClient::LibWaylandClient.wl_buffer_add_listener(wl_buffer, pointerof(@buffer_listener), memory.as(Void*))
         wl_buffer
       end
 
-      private def create_buffer(x, y, pixel_size)
-        stride = x * pixel_size
-        new_size = stride * y
+      private def create_buffer(width, height, pixel_size)
+        stride = width * pixel_size
+        new_size = stride * height
 
         {
           WaylandClient::LibWaylandClient.wl_shm_pool_create_buffer(
-            pool(new_size), 0, x, y, stride, format
+            pool(new_size), 0, width, height, stride, format
           ),
           new_size,
         }
