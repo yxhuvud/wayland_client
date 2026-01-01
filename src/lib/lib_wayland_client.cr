@@ -241,6 +241,7 @@ module WaylandClient
     enum WlKeyboardKeyState : UInt32
       Released = 0
       Pressed  = 1
+      Repeated = 2
     end
 
     enum TouchEventMask # WlTouchEvent?
