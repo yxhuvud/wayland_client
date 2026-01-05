@@ -2,7 +2,6 @@ require "../src/wayland_client"
 require "./cairo"
 
 struct Figure
-  NULL  = [[false]]
   FORMS = {
     [[false, true, false, false]]*4,              # I
     [[true, true], [true, true]],                 # O
