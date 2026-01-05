@@ -104,8 +104,8 @@ class Tetris
   private def adjust_score(deleted, dropped)
     multiplier = {40, 100, 300, 1200}[deleted - 1]
     @score += multiplier * (level + 1) + dropped * (level // 2).clamp(0, 5)
+    @level += deleted
     score_callback.call
-    @level += 1
   end
 
   private def clear_full_rows
