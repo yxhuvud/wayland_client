@@ -285,23 +285,18 @@ class TetrisGUI
     score_area.surface.repaint do |buf|
       buf.map! { WHITE }
 
-      Cairo.write_to_buf(buf.to_slice, buf.width, buf.height, "SCORE:",
-        pos: {BORDER, BORDER}.map(&.to_f),
-        rgba: {0.0, 0.0, 0.0, 1.0}
-      )
-      Cairo.write_to_buf(buf.to_slice, buf.width, buf.height, game.score.to_s,
-        pos: {BORDER, BORDER * 2}.map(&.to_f),
-        rgba: {0.0, 0.0, 0.0, 1.0}
-      )
-      Cairo.write_to_buf(buf.to_slice, buf.width, buf.height, "LEVEL:",
-        pos: {BORDER, BORDER * 3}.map(&.to_f),
-        rgba: {0.0, 0.0, 0.0, 1.0}
-      )
-      Cairo.write_to_buf(buf.to_slice, buf.width, buf.height, game.level.to_s,
-        pos: {BORDER, BORDER * 4}.map(&.to_f),
-        rgba: {0.0, 0.0, 0.0, 1.0}
-      )
+      score_text(buf, "SCORE:", BORDER)
+      score_text(buf, game.score.to_s, BORDER*2)
+      score_text(buf, "LEVEL:", BORDER*3)
+      score_text(buf, game.level.to_s, BORDER*4)
     end
+  end
+
+  private def score_text(buf, text, offset)
+    Cairo.write_to_buf(buf.to_slice, buf.width, buf.height, text,
+      pos: {BORDER, offset}.map(&.to_f),
+      rgba: {0.0, 0.0, 0.0, 1.0}
+    )
   end
 end
 
