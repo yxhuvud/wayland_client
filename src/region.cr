@@ -41,7 +41,7 @@ module WaylandClient
     def close
       return if @closed
       @closed = true
-      LibWaylandClient.wl_region_destroy(@region) unless @region.null?
+      LibWaylandClient.wl_region_destroy(@region) if @region
     end
   end
 end

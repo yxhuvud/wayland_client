@@ -60,7 +60,7 @@ module WaylandClient
       end
 
       private def destroy_buffer
-        unless @wl_buffer.null?
+        if @wl_buffer
           WaylandClient::LibWaylandClient.wl_buffer_destroy(@wl_buffer)
           @wl_buffer = Pointer(LibWaylandClient::WlBuffer).null
         end
@@ -78,11 +78,11 @@ module WaylandClient
       end
 
       private def unmap_pool
-        unless @buffer.null?
+        if @buffer
           LibC.munmap(@buffer, @capacity)
           @buffer = Pointer(Void).null
         end
-        unless @shm_pool.null?
+        if @shm_pool
           WaylandClient::LibWaylandClient.wl_shm_pool_destroy(@shm_pool)
           @shm_pool = Pointer(LibWaylandClient::WlShmPool).null
         end

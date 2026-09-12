@@ -45,7 +45,7 @@ module WaylandClient
       return if @closed
       @closed = true
       @frames.to_a.each(&.unref)
-      LibDecor.unref(@context) unless @context.null?
+      LibDecor.unref(@context) if @context
       @context = Pointer(LibDecor::Context).null
     end
 
