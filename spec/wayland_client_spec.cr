@@ -44,6 +44,19 @@ describe WaylandClient do
       end
     end
 
+    it "removes globals from the registry" do
+      client do |client|
+        global_name = nil
+        client.registry.names.each do |name, interface_name|
+          global_name = name if interface_name == "wl_shm"
+        end
+
+        global_name.should_not be_nil
+        client.registry.unregister(global_name.not_nil!)
+        client.registry.names.values.should_not contain("wl_shm")
+      end
+    end
+
     it "allows a surface to be closed more than once" do
       client do |client|
         surface = client.create_surface(

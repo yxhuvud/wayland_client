@@ -73,11 +73,13 @@ module WaylandClient
       @xdg.not_nil!
     end
 
-    def unregister(int)
+    def unregister(name)
       interface_name = @names.delete(name)
       case interface_name
       when "wl_compositor"
         @compositor = nil
+      when "wl_seat"
+        @seat = nil
       when "wl_subcompositor"
         @subcompositor = nil
       when "wl_shm"
@@ -115,6 +117,7 @@ module WaylandClient
     private def teardown_fun
       Proc(Pointer(Void), Pointer(WlRegistry), LibC::UInt, Void).new do |reg, wl_registry, interface|
         registry = reg.as(Registry)
+        registry.unregister(interface)
       end
     end
 
