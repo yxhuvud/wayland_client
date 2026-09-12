@@ -32,6 +32,13 @@ module WaylandClient
       end
 
       def checkout(registry : WaylandClient::Registry)
+        checkout { T.new(registry, self) }
+      end
+
+      # Factory form keeps pool behavior independent from the resource's
+      # construction requirements and makes it possible to test the pool
+      # without creating a Wayland connection.
+      def checkout(&factory : -> T)
         if buffer = @free_buffers.pop?
           buffer.resize(*size) if wrong_size?(buffer)
           @checked_out &+= 1
@@ -39,7 +46,7 @@ module WaylandClient
         end
 
         @checked_out &+= 1
-        T.new(registry, self)
+        factory.call
           .tap &.resize(*size)
       end
 
