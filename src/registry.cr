@@ -93,6 +93,7 @@ module WaylandClient
     def close
       return if @closed
       @closed = true
+      @seat.try &.close
       @seat = nil
       @xdg = nil
       @compositor = Pointer(LibWaylandClient::WlCompositor).null

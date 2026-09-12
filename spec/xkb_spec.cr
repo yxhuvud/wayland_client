@@ -38,3 +38,13 @@ describe WaylandClient::Seat::Xkb do
     regular.chr.should eq 'A'
   end
 end
+
+describe WaylandClient::Seat::KeyboardHandler do
+  it "closes the handler's XKB state" do
+    handler = WaylandClient::Seat::KeyboardHandler::Base.new
+
+    handler.close
+
+    handler.xkb.context.null?.should be_true
+  end
+end

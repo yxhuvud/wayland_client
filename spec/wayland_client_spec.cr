@@ -31,6 +31,16 @@ describe WaylandClient do
       end
     end
 
+    it "closes keyboard XKB resources with the client" do
+      keyboard = nil
+      client do |current|
+        keyboard = current.keyboard
+        keyboard.handler.xkb.context.null?.should be_false
+      end
+
+      keyboard.not_nil!.handler.xkb.context.null?.should be_true
+    end
+
     it "populates the registry while the connection is live" do
       client do |client|
         names = client.registry.names.values

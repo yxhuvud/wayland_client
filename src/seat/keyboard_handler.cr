@@ -50,6 +50,10 @@ module WaylandClient
         )
       end
 
+      def close
+        @xkb.close
+      end
+
       def enter(pressed_keys, surface, serial)
       end
 

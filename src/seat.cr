@@ -37,8 +37,15 @@ module WaylandClient
       @pointer_enabled = false
       @keyboard_enabled = false
       @touch_enabled = false
+      @closed = false
 
       LibWaylandClient.wl_seat_add_listener(@seat_base, pointerof(@listener), self.as(Void*))
+    end
+
+    def close
+      return if @closed
+      @closed = true
+      @keyboard.try &.close
     end
 
     def to_unsafe
