@@ -30,7 +30,7 @@ module WaylandClient
           end,
 
           frame: LibWaylandClient::WlPointerListenerFrame.new do |data, pointer|
-            data.as(self).frame
+            data.as(self).handle_frame
           end,
 
           axis_source: LibWaylandClient::WlPointerListenerAxisSource.new do |data, pointer, axis_source|
