@@ -11,7 +11,7 @@ module WaylandClient
     getter xdg : Xdg?
     getter names
 
-    def initialize(display)
+    def initialize(@display : Display)
       @names = Hash(LibC::UInt, String).new
 
       @listener = LibWaylandClient::WlRegistryListener.new(
@@ -25,8 +25,9 @@ module WaylandClient
       @seat = nil
       @xdg = nil
 
-      wl_registry = LibWaylandClient.wl_display_get_registry(display)
-      LibWaylandClient.wl_registry_add_listener(wl_registry, listener, self.as(Pointer(Void)))
+      @wl_registry = LibWaylandClient.wl_display_get_registry(@display)
+      LibWaylandClient.wl_registry_add_listener(@wl_registry, listener, self.as(Pointer(Void)))
+      @closed = false
     end
 
     def register(wl_registry, interface_name, name, version)
@@ -85,6 +86,17 @@ module WaylandClient
         @xdg = nil
       end
       # todo clear interface
+    end
+
+    def close
+      return if @closed
+      @closed = true
+      @seat = nil
+      @xdg = nil
+      @compositor = Pointer(LibWaylandClient::WlCompositor).null
+      @shm = Pointer(LibWaylandClient::WlShm).null
+      @subcompositor = Pointer(LibWaylandClient::WlSubcompositor).null
+      @names.clear
     end
 
     private def listener

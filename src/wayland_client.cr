@@ -18,6 +18,9 @@ module WaylandClient
     def initialize
       @display = Display.new
       @registry = Registry.new(@display)
+      @surfaces = [] of GenericSurface
+      @frames = [] of Decor::Frame
+      @closed = false
       @display.roundtrip
       @registry.seat
       @display.roundtrip
@@ -26,7 +29,21 @@ module WaylandClient
     def client(&)
       yield self
     ensure
-      display.disconnect
+      close
+    end
+
+    def close
+      return if @closed
+      @closed = true
+      @frames.reverse_each(&.close)
+      @display.close_decorator
+      @surfaces.reverse_each(&.close)
+      @registry.close
+      @display.close
+    end
+
+    def closed?
+      @closed
     end
 
     def wait_loop
@@ -54,11 +71,15 @@ module WaylandClient
                      app_id = nil,
                      initial_size = {400, 300},
                      &configure_callback : LibC::Int, LibC::Int, LibDecor::WindowState -> Void)
-      display.decorator.frame(surface, title, app_id, initial_size, configure_callback)
+      frame = display.decorator.frame(surface, title, app_id, initial_size, configure_callback)
+      @frames << frame
+      frame
     end
 
     def create_surface(kind : Buffer::Kind, format, opaque, accepts_input = true)
-      format.surface(registry, kind, opaque, accepts_input)
+      surface = format.surface(registry, kind, opaque, accepts_input)
+      @surfaces << surface
+      surface
     end
   end
 end

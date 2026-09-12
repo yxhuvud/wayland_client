@@ -8,6 +8,7 @@ module WaylandClient
     @error_callback : Pointer(LibDecor::Context), WaylandClient::LibDecor::Error, Pointer(Char) -> Void
 
     def initialize(@display : Display)
+      @closed = false
       @error_callback = Proc(LibDecor::Context*, LibDecor::Error, Char*, Void).new do |_context, error, char|
         error_message = String.new(char.as(Pointer(UInt8)))
 
@@ -22,6 +23,7 @@ module WaylandClient
               title = nil,
               app_id = nil,
               &configure_callback : LibC::Int, LibC::Int, LibDecor::WindowState -> Void)
+      raise "decor is closed" if @closed
       frame(surface, title, app_id, configure_callback)
     end
 
@@ -37,6 +39,14 @@ module WaylandClient
 
     def frame_removed(frame)
       @frames.delete(frame)
+    end
+
+    def close
+      return if @closed
+      @closed = true
+      @frames.to_a.each(&.unref)
+      LibDecor.unref(@context) unless @context.null?
+      @context = Pointer(LibDecor::Context).null
     end
 
     def to_unsafe
@@ -65,7 +75,7 @@ module WaylandClient
     end
 
     def finalize
-      LibDecor.unref @context
+      close
     end
   end
 end

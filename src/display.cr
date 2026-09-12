@@ -7,7 +7,10 @@ require "./cursor"
 
 module WaylandClient
   class Display
-    getter decorator : Decor { Decor.new(self) }
+    @decorator : Decor?
+    @closed = false
+
+    getter decorator : Decor { @decorator ||= Decor.new(self) }
 
     def initialize
       @display = LibWaylandClient.wl_display_connect(nil)
@@ -25,8 +28,20 @@ module WaylandClient
     end
 
     def disconnect
+      return if @closed
+      @closed = true
       LibWaylandClient.wl_display_disconnect(@display)
       @connected = false
+    end
+
+    def close
+      close_decorator
+      disconnect
+    end
+
+    # Releases the decorator and its frames before surfaces are destroyed.
+    def close_decorator
+      @decorator.try &.close
     end
 
     def roundtrip
@@ -59,7 +74,7 @@ module WaylandClient
     end
 
     def finalize
-      LibWaylandClient.wl_display_disconnect(@display)
+      close
     end
   end
 end

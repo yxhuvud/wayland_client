@@ -4,6 +4,7 @@ module WaylandClient
     getter parent : GenericSurface
 
     def initialize(@parent : GenericSurface, kind, opaque, sync, position)
+      @closed = false
       buffer_pool = Format.pool(kind)
       @surface = Format.surface(parent.registry, buffer_pool, opaque)
       @subsurface = WaylandClient::LibWaylandClient.wl_subcompositor_get_subsurface(
@@ -32,6 +33,8 @@ module WaylandClient
     end
 
     def close
+      return if @closed
+      @closed = true
       WaylandClient::LibWaylandClient.wl_subsurface_destroy(@subsurface)
       @surface.close
     end

@@ -12,11 +12,12 @@ module WaylandClient
     include GenericSurface
 
     getter surface : LibWaylandClient::WlSurface*
-    getter(frame_handler) { FrameCallback.new(self) }
+    getter(frame_handler) { @frame_handler ||= FrameCallback.new(self) }
     getter registry : Registry
     getter buffer_pool : WaylandClient::Buffer::Pool(WaylandClient::Buffer::Memory(Format))
 
     def initialize(@registry, @buffer_pool, opaque, accepts_input = true) # todo: listener
+      @closed = false
       @surface = WaylandClient::LibWaylandClient.wl_compositor_create_surface(registry.compositor)
       region.accepts_input if !accepts_input
       region(add_all: true).opaque! if opaque
@@ -94,6 +95,9 @@ module WaylandClient
     end
 
     def close
+      return if @closed
+      @closed = true
+      @frame_handler.try &.close
       LibWaylandClient.wl_surface_destroy(self)
     end
   end

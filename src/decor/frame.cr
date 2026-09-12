@@ -4,6 +4,7 @@ module WaylandClient
       getter :decor, :surface
 
       def initialize(@decor : Decor, @surface : GenericSurface, @configure_callback : Proc(LibC::Int, LibC::Int, LibDecor::WindowState, Void), @initial_size : Tuple(Int32, Int32))
+        @closed = false
         @interface = LibDecor::FrameInterface.new(
           configure: Proc(Pointer(LibDecor::Frame), Pointer(LibDecor::Configuration), Pointer(Void), Void).new { |frame, config, data|
             data.as(Frame).configure(config)
@@ -90,11 +91,14 @@ module WaylandClient
       end
 
       def unref
+        return if @closed
+        @closed = true
         decor.frame_removed(self)
         LibDecor.frame_unref(self)
       end
 
       def close
+        return if @closed
         LibDecor.frame_close(self)
       end
 

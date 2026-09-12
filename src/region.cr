@@ -1,6 +1,7 @@
 module WaylandClient
   class Region
     def initialize(compositor, @surface : GenericSurface, add_all = false)
+      @closed = false
       @region =
         if add_all
           # Region commands with null region affect the whole thing
@@ -34,7 +35,13 @@ module WaylandClient
     end
 
     def finalize
-      LibWaylandClient.wl_region_destroy(@region) if @region
+      close
+    end
+
+    def close
+      return if @closed
+      @closed = true
+      LibWaylandClient.wl_region_destroy(@region) unless @region.null?
     end
   end
 end
