@@ -165,11 +165,11 @@ class KeyboardHandler
 end
 
 class TetrisGUI
-  LIGHTGRAY = WaylandClient::Format::XRGB8888.new(0xEE, 0xEE, 0xEE)
-  BLUE      = WaylandClient::Format::XRGB8888.new(0x88, 0x88, 0xFF)
-  GRAY      = WaylandClient::Format::XRGB8888.new(0xCC, 0xCC, 0xCC)
-  WHITE     = WaylandClient::Format::XRGB8888.new(0xFF, 0xFF, 0xFF)
-  LIGHTBLUE = WaylandClient::Format::XRGB8888.new(0xBB, 0xBB, 0xFF)
+  LIGHTGRAY = WaylandClient::Format::XBGR8888.new(0xEE, 0xEE, 0xEE)
+  BLUE      = WaylandClient::Format::XBGR8888.new(0x88, 0x88, 0xFF)
+  GRAY      = WaylandClient::Format::XBGR8888.new(0xCC, 0xCC, 0xCC)
+  WHITE     = WaylandClient::Format::XBGR8888.new(0xFF, 0xFF, 0xFF)
+  LIGHTBLUE = WaylandClient::Format::XBGR8888.new(0xBB, 0xBB, 0xFF)
 
   BLOCK_WIDTH         = 20
   PLAYING_AREA_OFFSET = BLOCK_WIDTH
@@ -180,9 +180,10 @@ class TetrisGUI
   WINDOW_HEIGHT  = PLAYING_HEIGHT + 4 * BLOCK_WIDTH
   WINDOW_WIDTH   = 2 * PLAYING_WIDTH + 4 * BLOCK_WIDTH
 
-  getter main : WaylandClient::Surface(WaylandClient::Format::XRGB8888)
-  getter playing_area : WaylandClient::Subsurface(WaylandClient::Format::XRGB8888)
-  getter score_area : WaylandClient::Subsurface(WaylandClient::Format::XRGB8888)
+  getter main : WaylandClient::Surface(WaylandClient::Format::XBGR8888)
+  getter playing_area : WaylandClient::Subsurface(WaylandClient::Format::XBGR8888)
+  getter score_area : WaylandClient::Subsurface(WaylandClient::Format::XBGR8888)
+
   getter repaint_callback
   getter game
   # FIXME: Improve type - users should not need to know about Decor
@@ -191,19 +192,19 @@ class TetrisGUI
   def initialize(client : WaylandClient::Client)
     @main = client.create_surface(
       kind: :memory,
-      format: WaylandClient::Format::XRGB8888,
+      format: WaylandClient::Format::XBGR8888,
       opaque: true,
     )
     @playing_area = main.create_subsurface(
       kind: :memory,
-      format: WaylandClient::Format::XRGB8888,
+      format: WaylandClient::Format::XBGR8888,
       opaque: true,
       sync: false,
       position: {PLAYING_AREA_OFFSET + BORDER, PLAYING_AREA_OFFSET + BORDER}
     )
     @score_area = main.create_subsurface(
       kind: :memory,
-      format: WaylandClient::Format::XRGB8888,
+      format: WaylandClient::Format::XBGR8888,
       opaque: true,
       sync: false,
       position: {WINDOW_WIDTH // 2 + BORDER * 2, PLAYING_AREA_OFFSET + BORDER}

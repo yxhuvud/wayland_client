@@ -54,6 +54,16 @@ module WaylandClient
       end
     end
 
+    record(XBGR8888, red : UInt8, green : UInt8, blue : UInt8, _unused : UInt8) do
+      extend Base
+
+      def initialize(@red, @green, @blue, @_unused = 0u8); end
+
+      def self.shm_format
+        Formats::XBGR8888
+      end
+    end
+
     record(XRGB8888, blue : UInt8, green : UInt8, red : UInt8, _unused : UInt8) do
       extend Base
 
