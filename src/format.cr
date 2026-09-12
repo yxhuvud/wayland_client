@@ -49,6 +49,14 @@ module WaylandClient
 
       def initialize(@red, @green, @blue, @alpha); end
 
+      def self.from_rgba(*, red : UInt8, green : UInt8, blue : UInt8, alpha : UInt8)
+        new(blue, green, red, alpha)
+      end
+
+      def to_rgba
+        {red: red, green: green, blue: blue, alpha: alpha}
+      end
+
       def self.shm_format
         Formats::ARGB8888
       end
@@ -59,6 +67,14 @@ module WaylandClient
 
       def initialize(@red, @green, @blue, @_unused = 0u8); end
 
+      def self.from_rgba(*, red : UInt8, green : UInt8, blue : UInt8, alpha : UInt8)
+        new(red, green, blue)
+      end
+
+      def to_rgba
+        {red: red, green: green, blue: blue, alpha: 255u8}
+      end
+
       def self.shm_format
         Formats::XBGR8888
       end
@@ -68,6 +84,14 @@ module WaylandClient
       extend Base
 
       def initialize(@red, @green, @blue, @_unused = 0u8); end
+
+      def self.from_rgba(*, red : UInt8, green : UInt8, blue : UInt8, alpha : UInt8)
+        new(red, green, blue)
+      end
+
+      def to_rgba
+        {red: red, green: green, blue: blue, alpha: 255u8}
+      end
 
       def self.shm_format
         Formats::XRGB8888
