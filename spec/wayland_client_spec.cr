@@ -67,6 +67,24 @@ describe WaylandClient do
       end
     end
 
+    it "detects and uses native cursor shapes when available" do
+      client do |client|
+        manager_name = nil
+        client.registry.names.each do |name, interface_name|
+          manager_name = name if interface_name == "wp_cursor_shape_manager_v1"
+        end
+
+        pointer = client.pointer
+        if manager_name
+          client.registry.versions[manager_name.not_nil!].should be >= 1
+          pointer.cursor_shapes?.should be_true
+          pointer.set_shape(WaylandClient::CursorShape::Default, 0u32)
+        else
+          pointer.cursor_shapes?.should be_false
+        end
+      end
+    end
+
     it "allows a surface to be closed more than once" do
       client do |client|
         surface = client.create_surface(

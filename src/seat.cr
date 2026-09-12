@@ -1,4 +1,5 @@
 require "./lib/lib_wayland_client"
+require "./lib/lib_cursor_shape"
 require "./seat/keyboard"
 require "./seat/pointer"
 require "./seat/touch"
@@ -16,6 +17,7 @@ module WaylandClient
   class Seat
     getter seat_base
     getter name
+    getter cursor_shape_manager : ::Pointer(LibCursorShape::Manager)?
     @pointer : Pointer?
     @keyboard : Keyboard?
     @touch : Touch?
@@ -33,6 +35,7 @@ module WaylandClient
       @pointer = nil
       @keyboard = nil
       @touch = nil
+      @cursor_shape_manager = nil
 
       @pointer_enabled = false
       @keyboard_enabled = false
@@ -45,7 +48,12 @@ module WaylandClient
     def close
       return if @closed
       @closed = true
+      @pointer.try &.close
       @keyboard.try &.close
+    end
+
+    def cursor_shape_manager=(manager : ::Pointer(LibCursorShape::Manager)?)
+      @cursor_shape_manager = manager
     end
 
     def to_unsafe
@@ -55,7 +63,7 @@ module WaylandClient
     def pointer
       raise "pointer not enabled" unless pointer?
 
-      @pointer ||= Pointer.new(self)
+      @pointer ||= Pointer.new(self, cursor_shape_manager)
     end
 
     def pointer?

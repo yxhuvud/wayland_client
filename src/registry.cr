@@ -1,4 +1,5 @@
 require "./lib/lib_wayland_client"
+require "./lib/lib_cursor_shape"
 require "./seat"
 require "./xdg"
 
@@ -9,10 +10,12 @@ module WaylandClient
 
     getter seat : Seat?
     getter xdg : Xdg?
-    getter names
+    getter cursor_shape_manager : Pointer(LibCursorShape::Manager)?
+    getter names, versions
 
     def initialize(@display : Display)
       @names = Hash(LibC::UInt, String).new
+      @versions = Hash(LibC::UInt, LibC::UInt).new
 
       @listener = LibWaylandClient::WlRegistryListener.new(
         global: setup_fun,
@@ -24,6 +27,7 @@ module WaylandClient
       @subcompositor = Pointer(LibWaylandClient::WlSubcompositor).null
       @seat = nil
       @xdg = nil
+      @cursor_shape_manager = nil
 
       @wl_registry = LibWaylandClient.wl_display_get_registry(@display)
       LibWaylandClient.wl_registry_add_listener(@wl_registry, listener, self.as(Pointer(Void)))
@@ -34,6 +38,7 @@ module WaylandClient
       raise "Already exist" if @names[name]?
 
       @names[name] = interface_name
+      @versions[name] = version
 
       case interface_name
       when "wl_compositor"
@@ -48,6 +53,14 @@ module WaylandClient
       when "xdg_wm_base"
         base = bind_interface(LibXdgShell.xdg_wm_base_interface, LibWaylandClient::XdgWmBase)
         @xdg = Xdg.new(base)
+      when "wp_cursor_shape_manager_v1"
+        @cursor_shape_manager = bind_interface_pointer(
+          LibCursorShape.cursor_shape_manager_interface,
+          LibCursorShape::Manager,
+        )
+        if seat = @seat
+          seat.cursor_shape_manager = @cursor_shape_manager
+        end
       else
         #    p interface_name
       end
@@ -75,6 +88,7 @@ module WaylandClient
 
     def unregister(name)
       interface_name = @names.delete(name)
+      @versions.delete(name)
       case interface_name
       when "wl_compositor"
         @compositor = nil
@@ -96,10 +110,15 @@ module WaylandClient
       @seat.try &.close
       @seat = nil
       @xdg = nil
+      if manager = @cursor_shape_manager
+        LibCursorShape.cursor_shape_manager_destroy(manager)
+      end
+      @cursor_shape_manager = nil
       @compositor = Pointer(LibWaylandClient::WlCompositor).null
       @shm = Pointer(LibWaylandClient::WlShm).null
       @subcompositor = Pointer(LibWaylandClient::WlSubcompositor).null
       @names.clear
+      @versions.clear
     end
 
     private def listener
@@ -127,6 +146,15 @@ module WaylandClient
         wl_registry,
         name,
         pointerof({{interface}}),
+        version
+      ).as({{klass}}*)
+    end
+
+    private macro bind_interface_pointer(interface, klass)
+      LibWaylandClient.wl_registry_bind(
+        wl_registry,
+        name,
+        {{interface}},
         version
       ).as({{klass}}*)
     end

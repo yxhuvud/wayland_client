@@ -102,6 +102,35 @@ Relevant methods:
 relevant method, the `handler=` method. See <examples/complex.cr>
 for how to do that.
 
+Native cursor shapes can be selected with:
+
+```crystal
+client.pointer.set_shape(WaylandClient::CursorShape::Default)
+```
+
+Native shapes and explicit cursors, such as the one created with
+`WaylandClient::Cursor#use`, can be used together. They are alternatives
+for the same pointer: the most recently selected cursor is used. Both
+should normally be selected from the pointer handler's `enter` method,
+using `pointer_event.serial`.
+
+<details>
+<summary>Available shapes</summary>
+
+```text
+Default       ContextMenu   Help          Pointer
+Progress      Wait          Cell          Crosshair
+Text          VerticalText  Alias         Copy
+Move          NoDrop        NotAllowed    Grab
+Grabbing      EResize       NResize       NEResize
+NWResize      SResize       SEResize      SWResize
+WResize       EWResize      NSResize      NESWResize
+NWSEResize    ColResize     RowResize     AllScroll
+ZoomIn        ZoomOut       DndAsk        AllResize
+```
+
+</details>
+
 `keyboard`: listener handler for handling keyboard input. Has one
 relevant method, the `handler=` method. See <examples/complex.cr> for
 how to do that.

@@ -10,6 +10,7 @@ spec  : build
 build : init
 	cc -march=native -g -c -Wall -O3 -o build/shim.o       src/c/shim.c               -lwayland-client
 	cc -march=native -g -c -Wall -O3 -o build/xdg-shell.o  src/c/xdg-shell-protocol.c -lwayland-client -lrt
+	cc -march=native -g -c -Wall -O3 -o build/cursor-shape-v1.o src/c/cursor-shape-v1-protocol.c -lwayland-client
 
 clean :
 	rm build/*

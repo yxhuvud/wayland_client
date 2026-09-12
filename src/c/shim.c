@@ -1,5 +1,33 @@
 #include "wayland-client.h"
 #include "./xdg-shell-client-protocol.h"
+#include "./cursor-shape-v1-client-protocol.h"
+
+const struct wl_interface *
+cursor_shape_manager_interface_shim(void) {
+  return &wp_cursor_shape_manager_v1_interface;
+}
+
+struct wp_cursor_shape_device_v1 *
+cursor_shape_manager_get_pointer_shim(struct wp_cursor_shape_manager_v1 *manager,
+                                      struct wl_pointer *pointer) {
+  return wp_cursor_shape_manager_v1_get_pointer(manager, pointer);
+}
+
+void
+cursor_shape_manager_destroy_shim(struct wp_cursor_shape_manager_v1 *manager) {
+  wp_cursor_shape_manager_v1_destroy(manager);
+}
+
+void
+cursor_shape_device_destroy_shim(struct wp_cursor_shape_device_v1 *device) {
+  wp_cursor_shape_device_v1_destroy(device);
+}
+
+void
+cursor_shape_device_set_shape_shim(struct wp_cursor_shape_device_v1 *device,
+                                    uint32_t serial, uint32_t shape) {
+  wp_cursor_shape_device_v1_set_shape(device, serial, shape);
+}
 
 struct wl_registry *
 wl_display_get_registry_shim(struct wl_display *wl_display) {
