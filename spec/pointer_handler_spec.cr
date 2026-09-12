@@ -14,10 +14,10 @@ class SpecPointerHandler
 
   def frame
     @received = {
-      time: pointer_event.time,
-      x: pointer_event.x,
-      y: pointer_event.y,
-      button: pointer_event.button,
+      time:         pointer_event.time,
+      x:            pointer_event.x,
+      y:            pointer_event.y,
+      button:       pointer_event.button,
       button_state: pointer_event.button_state,
     }
   end
@@ -36,10 +36,10 @@ describe WaylandClient::Seat::PointerHandler do
     handler.simulate_frame
 
     handler.received.should eq({
-      time: 13u32,
-      x: 30,
-      y: 40,
-      button: 272u32,
+      time:         13u32,
+      x:            30,
+      y:            40,
+      button:       272u32,
       button_state: true,
     })
     handler.pointer_event.time.should eq 0

@@ -16,7 +16,7 @@ describe WaylandClient::Seat::Xkb do
   it "converts modifier masks to modifier flags" do
     modifiers = WaylandClient::Seat::Xkb::Modifiers.new(
       WaylandClient::Seat::Xkb::Modifiers::Modifier::SHIFT.value |
-        WaylandClient::Seat::Xkb::Modifiers::Modifier::CTRL.value,
+      WaylandClient::Seat::Xkb::Modifiers::Modifier::CTRL.value,
       0u32,
       WaylandClient::Seat::Xkb::Modifiers::Modifier::CAPSLOCK.value,
       0u32,
@@ -24,7 +24,7 @@ describe WaylandClient::Seat::Xkb do
 
     modifiers.depressed.should eq(
       WaylandClient::Seat::Xkb::Modifiers::Modifier::SHIFT |
-        WaylandClient::Seat::Xkb::Modifiers::Modifier::CTRL
+      WaylandClient::Seat::Xkb::Modifiers::Modifier::CTRL
     )
     modifiers.locked.should eq WaylandClient::Seat::Xkb::Modifiers::Modifier::CAPSLOCK
   end
