@@ -81,9 +81,11 @@ module WaylandClient
         @context = LibXkbcommon.xkb_context_new(LibXkbcommon::XkbContextFlags::NoFlags)
         @state = ::Pointer(LibXkbcommon::XkbState).null
         @keymap = ::Pointer(LibXkbcommon::XkbKeymap).null
+        @closed = false
       end
 
       def setup(format, fd, size)
+        raise "xkb is closed" if @closed
         raise "Unknown keyboard format #{format}" unless format == LibWaylandClient::WlKeyboardKeymapFormat::XkbV1.value
 
         xkb_keymap = read_keymap(fd, size)
@@ -94,6 +96,21 @@ module WaylandClient
 
         @keymap = xkb_keymap
         @state = xkb_state
+      end
+
+      def close
+        return if @closed
+        LibXkbcommon.xkb_state_unref(state) if state
+        LibXkbcommon.xkb_keymap_unref(keymap) if keymap
+        LibXkbcommon.xkb_context_unref(context) if context
+        @state = ::Pointer(LibXkbcommon::XkbState).null
+        @keymap = ::Pointer(LibXkbcommon::XkbKeymap).null
+        @context = ::Pointer(LibXkbcommon::XkbContext).null
+        @closed = true
+      end
+
+      def finalize
+        close
       end
 
       private def read_keymap(fd, size)

@@ -2,6 +2,17 @@ require "./spec_helper"
 require "../src/seat/xkb"
 
 describe WaylandClient::Seat::Xkb do
+  it "closes its native resources idempotently" do
+    xkb = WaylandClient::Seat::Xkb.new
+
+    xkb.close
+    xkb.close
+
+    xkb.context.null?.should be_true
+    xkb.keymap.null?.should be_true
+    xkb.state.null?.should be_true
+  end
+
   it "converts modifier masks to modifier flags" do
     modifiers = WaylandClient::Seat::Xkb::Modifiers.new(
       WaylandClient::Seat::Xkb::Modifiers::Modifier::SHIFT.value |
