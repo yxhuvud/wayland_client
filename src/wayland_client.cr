@@ -6,7 +6,7 @@ require "./counter"
 require "./buffer/memory"
 
 module WaylandClient
-  VERSION = "0.1.0"
+  VERSION = "0.3.0"
 
   def self.connect(&)
     Client.new.client { |client| yield client }
